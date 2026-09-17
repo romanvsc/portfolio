@@ -1,0 +1,23 @@
+import { projects, profile } from '../data.js';
+import { dorito, arrow, external } from '../components/layout.js';
+import { projectSection } from './projects.js';
+
+export function hero() {
+  return `<section class="hero shell" id="inicio" aria-labelledby="hero-title"><div class="hero-topline meta"><span>SYSTEMS × DESIGN × CODE</span><span>PERSONAS / PROCESOS / INTERFACES</span></div><div class="hero-editorial"><h1 id="hero-title"><span class="name-first">ROMÁN</span><span class="name-last">VOGEL<span class="hero-dot">.</span></span></h1><figure class="hero-portrait"><img src="/brand/roman.webp" width="720" height="720" fetchpriority="high" alt="Retrato de Román Vogel Corach"></figure><p class="portrait-index meta">RV — 01<br>EL LADO HUMANO<br>DEL CÓDIGO.</p></div><div class="hero-bottom"><p class="hero-role meta">ESTUDIANTE DE<br>ANALISTA DE SISTEMAS<br><span>& DESARROLLADOR WEB</span></p><p class="hero-claim">Construyo sistemas digitales<br>para problemas del mundo real.</p>${dorito('saludando', 'Oh, llegaste.', 'hero')}<a class="scroll-link meta" href="#proyectos">SCROLL <span aria-hidden="true">↓</span></a></div></section>`;
+}
+
+const stackItems = [
+  ['php', 'PHP', 'BACKEND', 'Lógica de negocio y aplicaciones del lado del servidor.'],
+  ['javascript', 'JavaScript', 'INTERACTION', 'Comportamiento, estados e interacción en la web.'],
+  ['vue', 'Vue.js', 'FRONTEND', 'Interfaces por componentes para procesos concretos.'],
+  ['css', 'CSS', 'UI', 'Jerarquía, sistemas de tokens y layouts adaptables.'],
+  ['sql', 'SQL', 'DATA', 'Relaciones, consultas y estructura para los datos.'],
+];
+
+function stackSection() {
+  return `<section class="stack-section section" id="tecnologias" aria-labelledby="stack-title"><div class="shell"><div class="stack-heading"><div><p class="meta">03 / BUILD WITH</p><h2 id="stack-title">MY<br><em>STACK.</em></h2></div><p class="stack-note">Mis fortalezas: PHP, JavaScript, Vue.js, CSS y SQL.</p></div><div class="stack-collage">${stackItems.map(([id, name, role, description], i) => `<article class="stack-card stack-card--${id}" data-stack-item="${id}"><div class="stack-card-top"><span class="meta">0${i + 1} / ${role}</span><span class="stack-mark" aria-hidden="true">＋</span></div><img src="/brand/stack/${id}.svg" width="440" height="${id === 'css' || id === 'sql' ? '404' : '583'}" alt="Dorito sosteniendo ${name}" loading="lazy" decoding="async"><div class="stack-card-copy"><h3>${name}</h3><p>${description}</p></div></article>`).join('')}</div></div></section>`;
+}
+
+export function home() {
+  return `<main id="contenido" tabindex="-1">${hero()}<section id="proyectos" aria-labelledby="work-title"><div class="work-intro shell"><div><p class="meta">01 / TRABAJO SELECCIONADO</p><h2 id="work-title">Problemas reales.<br><span>Cuatro contextos.</span></h2></div>${dorito('comentando', 'Este se puso interesante.', 'work')}<span class="work-count meta" aria-hidden="true"><span data-project-counter>01</span> / 04</span></div>${projects.map(projectSection).join('')}<div class="work-outro shell meta"><span>CUATRO FORMAS DE CONECTAR DATOS Y PERSONAS.</span><a class="text-link" href="${profile.github}?tab=repositories" ${external}>MÁS EN GITHUB ${arrow}</a></div></section><section class="about-section shell section" id="sobre-mi" aria-labelledby="about-title"><p class="meta">02 / DETRÁS DEL CÓDIGO</p><h2 id="about-title">Primero entender.<br>Después <em>construir.</em></h2><div class="about-body"><p class="about-lead">Soy Román Vogel Corach.<br>Estudio Analista de Sistemas.</p><div><p>Me interesa entender cómo se trabaja antes de decidir cómo programarlo. Los procesos, los datos y las personas que van a usar el sistema son el punto de partida.</p><p>Trabajo con problemas reales: registrar una operación, administrar una institución, acompañar un gimnasio o seguir el mantenimiento de una flota. Busco transformar esa complejidad en interfaces claras.</p><p class="meta about-principles">ANÁLISIS + DESARROLLO + PRODUCTO</p></div></div></section>${stackSection()}<section class="contact-section shell section" id="contacto" aria-labelledby="contact-title"><div class="contact-top"><p class="meta">04 / LA PRÓXIMA CONVERSACIÓN</p>${dorito('feliz', '¿Hacemos algo?', 'contact')}</div><h2 id="contact-title">¿TENÉS<br><a href="mailto:${profile.email}">UNA IDEA<span aria-hidden="true">↗</span></a>?</h2><div class="contact-bottom"><a class="contact-email text-link" href="mailto:${profile.email}">${profile.email}</a><div class="contact-links meta"><a class="text-link" href="${profile.github}" ${external}>GITHUB ${arrow}</a><a class="text-link" href="${profile.linkedin}" ${external}>LINKEDIN ${arrow}</a></div></div></section></main>`;
+}

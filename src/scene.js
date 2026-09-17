@@ -1,17 +1,21 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import tokens from './tokens.json';
+import { sceneConfig } from './scene-config.js';
 
-export function initScene(canvas) {
+export function initScene(canvas, onStatus = () => {}) {
   const frame = canvas.closest('.scene-frame');
+  frame.removeAttribute('data-scene-error');
+  frame.removeAttribute('data-scene-ready');
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
   } catch {
     frame.setAttribute('data-scene-error', 'true');
+    onStatus(false);
     return () => {};
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, sceneConfig.pixelRatioLimit));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.4;
   const scene = new THREE.Scene();
@@ -54,14 +58,17 @@ export function initScene(canvas) {
   function pointerLeave() { target = 0; requestDraw(); }
   function motionChange() { cancelAnimationFrame(raf); raf = 0; target = 0; root.rotation.y = 0; draw(); }
   function visibilityChange() { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else draw(); }
-  function contextLost(event) { event.preventDefault(); frame.removeAttribute('data-scene-ready'); frame.setAttribute('data-scene-error', 'true'); }
+  function contextLost(event) { event.preventDefault(); ready = false; cancelAnimationFrame(raf); raf = 0; frame.removeAttribute('data-scene-ready'); frame.setAttribute('data-scene-error', 'true'); onStatus(false); }
   function disposeObject(object) {
     object.traverse((item) => {
       item.geometry?.dispose();
-      if (item.material) for (const material of [].concat(item.material)) material.dispose();
+      if (item.material) for (const material of [].concat(item.material)) {
+        for (const value of Object.values(material)) if (value?.isTexture) value.dispose();
+        material.dispose();
+      }
     });
   }
-  new GLTFLoader().load('/models/portfolio-studio.glb', (gltf) => {
+  new GLTFLoader().load(sceneConfig.modelUrl, (gltf) => {
     if (disposed) { disposeObject(gltf.scene); return; }
     gltf.scene.traverse((object) => {
       if (object.material) for (const material of [].concat(object.material)) {
@@ -69,8 +76,8 @@ export function initScene(canvas) {
       }
     });
     root.add(gltf.scene); ready = true;
-    resize(); frame.setAttribute('data-scene-ready', 'true'); draw();
-  }, undefined, () => frame.setAttribute('data-scene-error', 'true'));
+    resize(); frame.setAttribute('data-scene-ready', 'true'); draw(); onStatus(true);
+  }, undefined, () => { if (!disposed) { frame.setAttribute('data-scene-error', 'true'); onStatus(false); } });
   const resizeObserver = new ResizeObserver(resize); resizeObserver.observe(canvas);
   const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) draw(); else { cancelAnimationFrame(raf); raf = 0; } });
   observer.observe(canvas);

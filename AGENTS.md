@@ -13,6 +13,8 @@ La V2 con Dorito, retrato, perfil de estudiante, contactos y tokens verdes fue a
 
 ## Identidad y contenido
 
+- V3 neobrutalista autorizada mediante CAMBIOS.MD/CAMBIOS_V2.MD y documentada en notas 09–12 del Vault. Cuatro proyectos con IPAC, sin Registro Personal. La sección visible `04 / Un pequeño experimento` fue retirada; Three/Blender quedan sin renderizar. No commit/push/deploy sin pedido nuevo.
+
 - Román Vogel Corach es **estudiante de Analista de Sistemas**, no presentar como graduado.
 - Fortalezas: PHP, JavaScript, Vue.js, CSS y SQL.
 - Contactos confirmados en `src/data.js`.

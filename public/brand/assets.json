@@ -29,6 +29,53 @@
       "colors": 647
     }
   ],
+  "stack": [
+    {
+      "pose": "php",
+      "path": "/brand/stack/php.svg",
+      "webp": "/brand/stack/php.webp",
+      "type": "vector-paths",
+      "bytes": 283558,
+      "colors": 822,
+      "source": "1254x1254"
+    },
+    {
+      "pose": "javascript",
+      "path": "/brand/stack/javascript.svg",
+      "webp": "/brand/stack/javascript.webp",
+      "type": "vector-paths",
+      "bytes": 262698,
+      "colors": 791,
+      "source": "1254x1254"
+    },
+    {
+      "pose": "vue",
+      "path": "/brand/stack/vue.svg",
+      "webp": "/brand/stack/vue.webp",
+      "type": "vector-paths",
+      "bytes": 257057,
+      "colors": 749,
+      "source": "1254x1254"
+    },
+    {
+      "pose": "css",
+      "path": "/brand/stack/css.svg",
+      "webp": "/brand/stack/css.webp",
+      "type": "vector-paths",
+      "bytes": 193645,
+      "colors": 613,
+      "source": "1254x1254"
+    },
+    {
+      "pose": "sql",
+      "path": "/brand/stack/sql.svg",
+      "webp": "/brand/stack/sql.webp",
+      "type": "vector-paths",
+      "bytes": 216457,
+      "colors": 704,
+      "source": "1254x1254"
+    }
+  ],
   "portrait": {
     "webp": "/brand/roman.webp",
     "svg": "/brand/roman.svg",

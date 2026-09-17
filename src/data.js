@@ -7,6 +7,9 @@ export const profile = {
 export const projects = [
   {
     id: 'registro',
+    displayTitle: 'REGISTRO DE<br>PRODUCCIÓN',
+    theme: 'production',
+    architecture: 'Interfaz Vue, API FastAPI y persistencia MySQL; Docker como herramienta de despliegue.',
     domain: 'Producción forestal', mark: 'RP', subtitle: 'Registro de operaciones',
     flowTitle: 'Del campo al registro', steps: ['Registrar', 'Validar', 'Consultar'],
     caseTitle: 'Poner orden en la operación de campo.',
@@ -27,6 +30,9 @@ export const projects = [
   },
   {
     id: 'ipac',
+    displayTitle: 'IPAC',
+    theme: 'education',
+    architecture: 'Frontend Vue y API Django REST Framework. PostgreSQL figura como previsto en la documentación; no se declara aquí su uso en producción.',
     domain: 'Gestión educativa', mark: 'IP', subtitle: 'Administración y tesorería',
     flowTitle: 'Un circuito administrativo', steps: ['Alumnos', 'Cuotas', 'Pagos'],
     caseTitle: 'Administrar con contexto de sucursal.',
@@ -40,13 +46,16 @@ export const projects = [
     description:
       'Administración, tesorería y cobranzas para IPAC Posadas y Eldorado, con alumnos, cuotas, caja, pagos, reportes e importaciones.',
     role: 'Full-stack · arquitectura modular',
-    stack: ['Django', 'DRF', 'Vue', 'PostgreSQL'],
+    stack: ['Django', 'DRF', 'Vue', 'Vite'],
     focus: 'Roles · sucursales · cobranzas',
     accent: 'cobalt',
     repository: 'https://github.com/romanvsc/IPAC',
   },
   {
     id: 'gimnasio',
+    displayTitle: 'GESTIÓN<br>GIMNASIO',
+    theme: 'wellness',
+    architecture: 'PWA Vue 3 construida con Vite, estado con Pinia y servicios conectados a Supabase.',
     domain: 'Gestión de gimnasio', mark: 'GY', subtitle: 'Socios y actividad diaria',
     flowTitle: 'La operación del día a día', steps: ['Socios', 'Planes', 'Accesos'],
     caseTitle: 'Acompañar el ritmo del gimnasio.',
@@ -67,6 +76,9 @@ export const projects = [
   },
   {
     id: 'mantenimiento',
+    displayTitle: 'MANTENIMIENTO<br>DE CAMIONES',
+    theme: 'maintenance',
+    architecture: 'Aplicación PHP con CodeIgniter 4 y persistencia MySQL/MariaDB; componentes de interfaz en Vue.js.',
     domain: 'Mantenimiento de flotas', mark: 'MT', subtitle: 'Equipos y órdenes de trabajo',
     flowTitle: 'De la lectura a la intervención', steps: ['Lecturas', 'Alertas', 'Órdenes'],
     caseTitle: 'Seguir el mantenimiento de principio a fin.',
