@@ -1,0 +1,37 @@
+{
+  "poses": [
+    {
+      "pose": "comentando",
+      "path": "/brand/dorito/comentando.svg",
+      "type": "vector-paths",
+      "bytes": 180593,
+      "colors": 625
+    },
+    {
+      "pose": "trabajando",
+      "path": "/brand/dorito/trabajando.svg",
+      "type": "vector-paths",
+      "bytes": 202790,
+      "colors": 646
+    },
+    {
+      "pose": "feliz",
+      "path": "/brand/dorito/feliz.svg",
+      "type": "vector-paths",
+      "bytes": 203470,
+      "colors": 661
+    },
+    {
+      "pose": "saludando",
+      "path": "/brand/dorito/saludando.svg",
+      "type": "vector-paths",
+      "bytes": 213572,
+      "colors": 647
+    }
+  ],
+  "portrait": {
+    "webp": "/brand/roman.webp",
+    "svg": "/brand/roman.svg",
+    "type": "embedded-raster"
+  }
+}

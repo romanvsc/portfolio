@@ -1,0 +1,34 @@
+/* Generated from tokens.json. Edit the source, not this file. */
+@theme static {
+  --color-*: initial;
+  --color-canvas: #f8f8f0;
+  --color-surface: #ffffff;
+  --color-surface-soft: #eef1e7;
+  --color-ink: #192c25;
+  --color-muted: #59685c;
+  --color-line: #d8dfd0;
+  --color-brand: #285943;
+  --color-brand-hover: #183f2e;
+  --color-brand-soft: #dfe9d8;
+  --color-on-brand: #f9fff2;
+  --color-accent: #d9ed9a;
+  --color-accent-ink: #374a1e;
+  --color-focus: #346e44;
+  --color-production: #285943;
+  --color-production-soft: #dde9d4;
+  --color-education: #405c69;
+  --color-education-soft: #e2ebea;
+  --color-wellness: #775136;
+  --color-wellness-soft: #f0e5d5;
+  --color-maintenance: #5e6540;
+  --color-maintenance-soft: #e9ebd7;
+  --color-scene-light: #fff8e8;
+  --color-scene-screen: #19392e;
+  --color-scene-metal: #afb9a7;
+  --color-scene-wood: #bba286;
+  --color-scene-leaf: #508153;
+  --color-shadow: #192c2514;
+  --color-shadow-strong: #192c2530;
+  --font-sans: 'Manrope', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
