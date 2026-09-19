@@ -13,13 +13,13 @@ La V2 con Dorito, retrato, perfil de estudiante, contactos y tokens verdes fue a
 
 ## Identidad y contenido
 
-- V3 neobrutalista autorizada mediante CAMBIOS.MD/CAMBIOS_V2.MD y documentada en notas 09–12 del Vault. Cuatro proyectos con IPAC, sin Registro Personal. La sección visible `04 / Un pequeño experimento` fue retirada; Three/Blender quedan sin renderizar. No commit/push/deploy sin pedido nuevo.
+- V3 neobrutalista autorizada mediante CAMBIOS.MD/CAMBIOS_V2.MD y documentada en notas 09–32 del Vault. Cuatro proyectos con IPAC, sin Registro Personal. La sección visible `04 / Un pequeño experimento` fue retirada; Three/Blender quedan sin renderizar. La home conserva cajas largas con iconos SVG transparentes usados como fondo centrado, velo semitransparente y placa tipográfica legible. El header es opaco/full-width, muestra siempre Inicio, Proyectos, Tecnologías, Sobre Mí y Contacto —sin menú fullscreen— y cada enlace incorpora el SVG correspondiente derivado de `Iconos-header.png`. Los pins de GSAP respetan la altura del header. El retrato conserva `roman.webp` sin alteraciones y vuelve a un rectángulo opaco con bloques editoriales detrás; no usar máscaras ni recortes generativos que cambien rasgos. Las capturas reales sólo aparecen dentro de los casos y Mantenimiento incluye obligatoriamente su chatbot. La base V3 tiene commit/push `9d62c72`; las iteraciones posteriores quedan pendientes de publicación y no hay deploy manual.
 
 - Román Vogel Corach es **estudiante de Analista de Sistemas**, no presentar como graduado.
 - Fortalezas: PHP, JavaScript, Vue.js, CSS y SQL.
 - Contactos confirmados en `src/data.js`.
 - Dorito es la mascota naranja provista por el usuario. Conservar originales.
-- No inventar métricas, disponibilidad laboral, autoría exclusiva, screenshots ni demos. Los visuales conceptuales deben identificarse como tales.
+- No inventar métricas, disponibilidad laboral, autoría exclusiva, screenshots ni demos. Las capturas reales deben conservar su carácter verificable y los iconos ilustrados no deben presentarse como pantallas del sistema.
 
 ## Sistema visual
 
@@ -27,6 +27,7 @@ La V2 con Dorito, retrato, perfil de estudiante, contactos y tokens verdes fue a
 - Usar tokens semánticos de Tailwind, no paletas por nombre de color ni valores literales en componentes.
 - Las ilustraciones vectorizadas tienen sus paletas internas; los píxeles de las fotografías no son tokens de UI.
 - `roman.svg` contiene fotografía raster: nunca describirlo como trazados vectoriales.
+- Rosehot Serif es la display local del hero y los títulos. La licencia oficial permite uso web personal autoalojado, pero prohíbe redistribuir el archivo; mantener el `.ttf` fuera de commits públicos y deploys hasta contar con una licencia o vía autorizada de distribución.
 - Respetar movimiento reducido, navegación por teclado, reflow y fallback de la escena 3D.
 
 ## Comprobación

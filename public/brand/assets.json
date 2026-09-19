@@ -76,6 +76,92 @@
       "source": "1254x1254"
     }
   ],
+  "projectIcons": [
+    {
+      "id": "registro-produccion",
+      "path": "/brand/project-icons/registro-produccion.svg",
+      "source": "/brand/capturas_apps/produccion/capturas/icono_maquina_forestal.png",
+      "type": "vector-paths",
+      "bytes": 138434,
+      "colors": 398
+    },
+    {
+      "id": "ipac",
+      "path": "/brand/project-icons/ipac.svg",
+      "source": "/brand/capturas_apps/IPAC/portfolio/icono_sobrero_egresado.png",
+      "type": "vector-paths",
+      "bytes": 28663,
+      "colors": 64
+    },
+    {
+      "id": "gestion-gimnasio",
+      "path": "/brand/project-icons/gestion-gimnasio.svg",
+      "source": "/brand/capturas_apps/gimnasio/icono_mancuernas.png",
+      "type": "vector-paths",
+      "bytes": 117121,
+      "colors": 287
+    },
+    {
+      "id": "mantenimiento",
+      "path": "/brand/project-icons/mantenimiento.svg",
+      "source": "/brand/capturas_apps/mantenimiento/icono_mantenimiento.png",
+      "type": "vector-paths",
+      "bytes": 188691,
+      "colors": 435
+    }
+  ],
+  "headerIcons": [
+    {
+      "id": "inicio",
+      "path": "/brand/header-icons/inicio.svg",
+      "source": "/brand/stack/Iconos-header.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 6070,
+      "colors": 7,
+      "sourceSheet": "1672x941"
+    },
+    {
+      "id": "proyectos",
+      "path": "/brand/header-icons/proyectos.svg",
+      "source": "/brand/stack/Iconos-header.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 10354,
+      "colors": 14,
+      "sourceSheet": "1672x941"
+    },
+    {
+      "id": "tecnologias",
+      "path": "/brand/header-icons/tecnologias.svg",
+      "source": "/brand/stack/Iconos-header.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 9854,
+      "colors": 8,
+      "sourceSheet": "1672x941"
+    },
+    {
+      "id": "sobre-mi",
+      "path": "/brand/header-icons/sobre-mi.svg",
+      "source": "/brand/stack/Iconos-header.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 3998,
+      "colors": 5,
+      "sourceSheet": "1672x941"
+    },
+    {
+      "id": "contacto",
+      "path": "/brand/header-icons/contacto.svg",
+      "source": "/brand/stack/Iconos-header.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 7642,
+      "colors": 11,
+      "sourceSheet": "1672x941"
+    }
+  ],
   "portrait": {
     "webp": "/brand/roman.webp",
     "svg": "/brand/roman.svg",

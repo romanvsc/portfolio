@@ -4,6 +4,45 @@ export const profile = {
   linkedin: 'https://www.linkedin.com/in/roman-vogel-corach-2998bb31b/',
 };
 
+const projectMedia = {
+  registro: {
+    icon: '/brand/project-icons/registro-produccion.svg',
+    iconAlt: 'Ilustración de una máquina forestal para Registro de Producción',
+    gallery: [
+      { src: '/brand/capturas_apps/produccion/capturas/desktop/admin/16-admin-dashboard.png', width: 1440, height: 1000, label: 'Análisis gerencial', alt: 'Dashboard de análisis de producción con filtros, métricas y evolución diaria.', caption: 'Dashboard de análisis de producción, filtros y evolución diaria.' },
+      { src: '/brand/capturas_apps/produccion/capturas/desktop/admin/10-produccion.png', width: 1440, height: 1000, label: 'Carga de producción', alt: 'Flujo guiado de carga de producción con contexto, operador, equipo y datos de producción.', caption: 'Flujo guiado para registrar una operación de producción.' },
+      { src: '/brand/capturas_apps/produccion/capturas/desktop/admin/14-pendientes.png', width: 1440, height: 1000, label: 'Sincronización', alt: 'Vista de registros pendientes y estado de sincronización del dispositivo.', caption: 'Cola local y estado de sincronización del dispositivo.' },
+    ],
+  },
+  ipac: {
+    icon: '/brand/project-icons/ipac.svg',
+    iconAlt: 'Ilustración de un birrete de egresado para IPAC',
+    gallery: [
+      { src: '/brand/capturas_apps/IPAC/portfolio/01-dashboard-desktop.png', width: 1084, height: 492, label: 'Dashboard', alt: 'Dashboard de IPAC con alumnos, sucursales, cobranzas y pagos.', caption: 'Resumen operativo con alumnos, sucursales, cobranzas y pagos.' },
+      { src: '/brand/capturas_apps/IPAC/portfolio/05-caja-diaria-desktop.png', width: 1084, height: 492, label: 'Caja diaria', alt: 'Vista de caja diaria de IPAC con tesorería, conciliación y movimientos.', caption: 'Tesorería diaria, conciliación y movimientos de caja.' },
+      { src: '/brand/capturas_apps/IPAC/portfolio/07-importar-datos-desktop.png', width: 1084, height: 492, label: 'Importar datos', alt: 'Pantalla de IPAC para importar alumnos, carreras, conceptos y saldos desde archivos.', caption: 'Carga controlada de alumnos y saldos desde archivos.' },
+    ],
+  },
+  gimnasio: {
+    icon: '/brand/project-icons/gestion-gimnasio.svg',
+    iconAlt: 'Ilustración de mancuernas para Gestión de Gimnasio',
+    gallery: [
+      { src: '/brand/capturas_apps/gimnasio/portfolio/dashboard-desktop.png', width: 1093, height: 495, label: 'Dashboard', alt: 'Dashboard de Gestión de Gimnasio con cobros, socios, visitas y acciones rápidas.', caption: 'Resumen diario con cobros, socios, visitas y acciones rápidas.' },
+      { src: '/brand/capturas_apps/gimnasio/portfolio/control-acceso-desktop.png', width: 1093, height: 495, label: 'Control de acceso', alt: 'Pantalla de control de acceso al gimnasio para registrar el ingreso de un socio.', caption: 'Registro de ingreso de socios en la operación diaria.' },
+      { src: '/brand/capturas_apps/gimnasio/portfolio/pagos-desktop.png', width: 1024, height: 493, label: 'Registrar pago', alt: 'Flujo de Gestión de Gimnasio para registrar el pago de una cuota.', caption: 'Flujo de cobro de cuotas y actualización de membresía.' },
+    ],
+  },
+  mantenimiento: {
+    icon: '/brand/project-icons/mantenimiento.svg',
+    iconAlt: 'Ilustración de un camión en mantenimiento',
+    gallery: [
+      { src: '/brand/capturas_apps/mantenimiento/Captura de pantalla 2026-09-17 214602.png', width: 372, height: 493, label: 'Chatbot Asistente IA', alt: 'Chatbot Asistente IA de Mantenimiento mostrando vencimientos y acciones rápidas.', caption: 'Chatbot del sistema mostrando vencimientos y acciones de mantenimiento.', orientation: 'portrait' },
+      { src: '/brand/capturas_apps/mantenimiento/ui/dashboard-desktop.png', width: 1440, height: 900, label: 'Dashboard', alt: 'Dashboard de Mantenimiento con estado de camiones, próximos servicios y vencimientos.', caption: 'Resumen de flota, próximos servicios y vencimientos.' },
+      { src: '/brand/capturas_apps/mantenimiento/ui/ficha-equipo-desktop.png', width: 1440, height: 2548, label: 'Ficha de equipo', alt: 'Ficha de equipo de Mantenimiento con datos, ubicación, lecturas e historial.', caption: 'Historial, lecturas, datos y relaciones de un camión.' },
+    ],
+  },
+};
+
 export const projects = [
   {
     id: 'registro',
@@ -27,6 +66,7 @@ export const projects = [
     focus: 'Trazabilidad · campo · idempotencia',
     accent: 'forest',
     repository: 'https://github.com/romanvsc/registro_produccion',
+    media: projectMedia.registro,
   },
   {
     id: 'ipac',
@@ -50,6 +90,7 @@ export const projects = [
     focus: 'Roles · sucursales · cobranzas',
     accent: 'cobalt',
     repository: 'https://github.com/romanvsc/IPAC',
+    media: projectMedia.ipac,
   },
   {
     id: 'gimnasio',
@@ -73,6 +114,7 @@ export const projects = [
     focus: 'Check-in · pagos · responsive',
     accent: 'orange',
     repository: 'https://github.com/romanvsc/gestion_gimnasio',
+    media: projectMedia.gimnasio,
   },
   {
     id: 'mantenimiento',
@@ -96,5 +138,6 @@ export const projects = [
     focus: 'Preventivo · historial · alertas',
     accent: 'cyan',
     repository: 'https://github.com/romanvsc/mantenimiento',
+    media: projectMedia.mantenimiento,
   },
 ];

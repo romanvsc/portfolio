@@ -11,21 +11,32 @@ export function initMotion() {
     const cleanup = new AbortController();
     const { signal } = cleanup;
     if (document.querySelector('.hero')) {
-      gsap.from('.hero h1 > span', { clipPath: 'inset(100% 0 0 0)', y: 25, duration: .85, stagger: .12, ease: 'power3.out', clearProps: 'clipPath,transform' });
-      gsap.from('.hero-portrait', { clipPath: 'inset(0 0 100% 0)', duration: 1, ease: 'power3.out', clearProps: 'clipPath' });
-      gsap.from('#dorito-hero', { y: 12, rotation: -5, duration: .6, delay: .65, clearProps: 'transform' });
+      gsap.timeline({ defaults: { ease: 'power3.out' } })
+        .from('.hero-topline > span', { y: -10, opacity: 0, duration: .35, stagger: .07, clearProps: 'transform,opacity' }, 0)
+        .from('.name-first', { clipPath: 'inset(100% 0 0 0)', y: 38, duration: .8, clearProps: 'clipPath,transform' }, .05)
+        .from('.name-last', { clipPath: 'inset(0 100% 0 0)', x: 52, duration: .88, clearProps: 'clipPath,transform' }, .14)
+        .from('.hero-portrait', { clipPath: 'inset(0 0 100% 0)', x: 22, duration: .95, clearProps: 'clipPath,transform' }, .12)
+        .from('.portrait-index', { clipPath: 'inset(0 100% 0 0)', x: 12, duration: .45, clearProps: 'clipPath,transform' }, .42)
+        .from('.hero-role', { clipPath: 'inset(0 100% 0 0)', x: -12, duration: .5, clearProps: 'clipPath,transform' }, .46)
+        .from('.hero-claim', { clipPath: 'inset(0 0 100% 0)', y: 16, duration: .5, clearProps: 'clipPath,transform' }, .5)
+        .from('#dorito-hero', { y: 16, rotation: -6, duration: .48, clearProps: 'transform' }, .58)
+        .from('.scroll-link', { clipPath: 'inset(0 0 100% 0)', y: -8, duration: .4, clearProps: 'clipPath,transform' }, .62);
       if (conditions.desktop) {
         gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: .6 } })
-          .to('.name-first', { xPercent: -6, ease: 'none' }, 0)
-          .to('.name-last', { xPercent: 5, ease: 'none' }, 0)
-          .to('.hero-portrait img', { scale: 1.12, yPercent: 8, ease: 'none' }, 0)
-          .to('.hero-editorial', { clipPath: 'inset(0 0 24% 0)', ease: 'none' }, 0);
+          .to('.name-first', { xPercent: -8, ease: 'none' }, 0)
+          .to('.name-last', { xPercent: 7, ease: 'none' }, 0)
+          .to('.hero-portrait', { xPercent: -7, yPercent: 5, scale: 1.04, ease: 'none' }, 0)
+          .to('.hero-portrait img', { scale: 1.1, yPercent: 6, ease: 'none' }, 0)
+          .to('.portrait-index', { yPercent: -30, opacity: .25, ease: 'none' }, 0)
+          .to('#dorito-hero', { yPercent: 45, autoAlpha: 0, ease: 'none' }, 0)
+          .to('.hero-editorial', { clipPath: 'inset(0 0 20% 0)', ease: 'none' }, 0);
       }
     }
     document.querySelectorAll('.project-section').forEach((section) => {
       const project = projects.find((item) => item.id === section.dataset.project);
       const stage = section.querySelector('.project-stage');
       const counter = document.querySelector('[data-project-counter]');
+      const headerHeight = document.querySelector('.site-header')?.offsetHeight || 0;
       gsap.timeline({ scrollTrigger: { trigger: section, start: 'top 85%', end: 'bottom 15%', scrub: .5,
         onEnter: () => { if (counter) counter.textContent = project.number; },
         onEnterBack: () => { if (counter) counter.textContent = project.number; },
@@ -34,10 +45,10 @@ export function initMotion() {
         .to(section, { backgroundColor: tokens[`${project.theme}-soft`], duration: .6 })
         .to(section, { backgroundColor: tokens.canvas, '--active-accent': tokens.muted, duration: .2, ease: 'none' });
       if (conditions.desktop) {
-        gsap.timeline({ scrollTrigger: { trigger: stage, start: 'top top', end: '+=220', pin: true, scrub: .6, invalidateOnRefresh: true } })
+        gsap.timeline({ scrollTrigger: { trigger: stage, start: `top ${headerHeight}px`, end: '+=220', pin: true, scrub: .6, invalidateOnRefresh: true } })
           .fromTo(section.querySelector('.art-stage'), { clipPath: 'inset(0 3% 0 3%)', scale: .97 }, { clipPath: 'inset(0 0% 0 0%)', scale: 1, ease: 'none' }, 0)
           .to(section.querySelector('h3'), { x: 20, ease: 'none' }, 0)
-          .to(section.querySelector('.art-label'), { x: -12, ease: 'none' }, 0);
+          .to(section.querySelector('.art-copy-plate'), { x: -12, ease: 'none' }, 0);
       }
     });
     if (conditions.desktop && document.querySelector('.work-count')) {
@@ -51,10 +62,6 @@ export function initMotion() {
       clipPath: 'inset(0 0 100% 0)', y: 24, rotation: index % 2 ? 3 : -3, duration: .55, delay: index * .04, ease: 'power3.out', clearProps: 'clipPath,transform',
       immediateRender: false, scrollTrigger: { trigger: card, start: 'top 92%', once: true },
     }));
-    const dialog = document.querySelector('#menu-dialog');
-    if (dialog) document.addEventListener('portfolio:menu-open', () => {
-      gsap.fromTo(dialog.querySelectorAll('nav a'), { clipPath: 'inset(0 0 100% 0)', y: -18 }, { clipPath: 'inset(0)', y: 0, duration: .32, stagger: .04, ease: 'power3.out', clearProps: 'all' });
-    }, { signal });
     document.querySelectorAll('.dorito summary').forEach((item) => {
       const tilt = gsap.quickTo(item, 'rotation', { duration: .3 });
       item.addEventListener('pointerenter', () => tilt(-4), { signal });
