@@ -29,6 +29,14 @@
       "colors": 647
     }
   ],
+  "companion": {
+    "id": "dorito-acostado",
+    "path": "/brand/dorito/dorito-acostado.svg",
+    "source": "/brand/dorito/dorito_acostado.png",
+    "type": "vector-paths",
+    "bytes": 285881,
+    "colors": 940
+  },
   "stack": [
     {
       "pose": "php",
@@ -166,5 +174,117 @@
     "webp": "/brand/roman.webp",
     "svg": "/brand/roman.svg",
     "type": "embedded-raster"
-  }
+  },
+  "technologyIcons": [
+    {
+      "id": "vue",
+      "technology": "Vue.js",
+      "path": "/brand/technology-icons/vue.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 1,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 35389,
+      "colors": 77
+    },
+    {
+      "id": "php",
+      "technology": "PHP",
+      "path": "/brand/technology-icons/php.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 2,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 34450,
+      "colors": 112
+    },
+    {
+      "id": "source-03",
+      "technology": null,
+      "path": "/brand/technology-icons/source-03.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 3,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 46708,
+      "colors": 139
+    },
+    {
+      "id": "javascript",
+      "technology": "JavaScript",
+      "path": "/brand/technology-icons/javascript.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 4,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 34855,
+      "colors": 67
+    },
+    {
+      "id": "python",
+      "technology": "Python",
+      "path": "/brand/technology-icons/python.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 5,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 35754,
+      "colors": 97
+    },
+    {
+      "id": "source-06",
+      "technology": null,
+      "path": "/brand/technology-icons/source-06.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 6,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 41656,
+      "colors": 95
+    },
+    {
+      "id": "supabase",
+      "technology": "Supabase",
+      "path": "/brand/technology-icons/supabase.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 7,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 29845,
+      "colors": 84
+    },
+    {
+      "id": "docker",
+      "technology": "Docker",
+      "path": "/brand/technology-icons/docker.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 8,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 45576,
+      "colors": 119
+    },
+    {
+      "id": "laravel",
+      "technology": "Laravel",
+      "path": "/brand/technology-icons/laravel.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 9,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 30131,
+      "colors": 82
+    },
+    {
+      "id": "source-10",
+      "technology": null,
+      "path": "/brand/technology-icons/source-10.svg",
+      "source": "/brand/project-icons/tecnologias_icon.png",
+      "sourcePosition": 10,
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 24767,
+      "colors": 53
+    }
+  ]
 }

@@ -23,7 +23,7 @@ npm run check
 - Tailwind 4 mediante el plugin de Vite; no hace falta `tailwind.config.js` en este enfoque CSS-first.
 - `src/tokens.json`: única fuente de colores de UI y escena. Genera `src/theme.css` con `@theme` y utilidades semánticas: `bg-brand`, `text-ink`, `border-line`, etc. La paleta predeterminada se desactiva. El desarrollo observa cambios de tokens y regenera el tema; las cajas usan `project-overlay` y `project-copy-plate`.
 - `src/data.js`: contactos y contenido de los cuatro proyectos.
-- `src/components/project-media.js`: identidad visual por capas —SVG de fondo, velo y placa tipográfica— y galería corta de capturas para las rutas internas.
+- `src/components/project-media.js`: identidad visual conceptual por capas para portadas; las capturas reales se reservan para la galería de cada caso.
 - GSAP + ScrollTrigger: máscaras de entrada, separación tipográfica y parallax en hero; interpolación de color por capítulo, contador y pin de 220 px sólo en desktop ≥1100×720. Sin secuencias fijadas en móvil ni efectos GSAP con movimiento reducido.
 - El retrato del hero vuelve a una fotografía rectangular, completamente opaca y sin máscaras. Dos bloques editoriales con tokens semánticos —marca y tinta— generan profundidad detrás de la foto, mientras `VOGEL.` permanece superpuesto por delante. La composición conserva reveal y parallax de GSAP.
 - Three.js: la infraestructura y el GLB se conservan para una futura iteración, pero el bloque `04 / Un pequeño experimento` fue retirado de la home por decisión del usuario. No se carga Three en la ruta principal.
@@ -35,7 +35,7 @@ npm run check
 ## Módulos
 
 - `src/main.js`: rutas y ciclo de vida.
-- `src/sections/`: home, capítulos de proyectos y case studies con nueve secciones.
+- `src/sections/`: home y cuatro Case Studies organizados en cinco secciones: Problema, Tecnologías utilizadas, Sobre el proyecto, Galería del proyecto y Características.
 - `src/components/`: layout, Dorito, navegación y activación del escritorio.
 - `src/animations/index.js`: GSAP, condiciones responsive y cleanup.
 - `src/data.js`: selección de cuatro proyectos. IPAC se conserva; Registro Personal fue excluido explícitamente por el usuario.
@@ -44,11 +44,17 @@ npm run check
 
 ## Assets
 
+El hero utiliza `public/brand/dorito/dorito-acostado.svg` como companion interactivo sobre la línea negra izquierda. Conserva la fuente PNG original y muestra el mensaje de Dorito con hover, foco o tap; no tiene animación de ojos.
+
 Cuatro poses independientes en `public/brand/dorito/*.svg`: trazados vectoriales reales con paleta local, fondo conservado y sin títulos inferiores. La conversión simplifica textura. Cinco ilustraciones nuevas están en `public/brand/stack/{php,javascript,vue,css,sql}.svg`; cada una tiene su WebP optimizado correspondiente. La Stack utiliza los SVG para conservar el asset solicitado.
 
 Los cuatro iconos de proyecto están en `public/brand/project-icons/` como SVG de trazados transparentes: Registro de Producción, IPAC, Gestión de Gimnasio y Mantenimiento. Los PNG originales permanecen en `public/brand/capturas_apps/`. La interfaz carga únicamente tres capturas esenciales por proyecto; la captura principal de Mantenimiento es el Chatbot Asistente IA indicado por el usuario. En la home, cada icono funciona como fondo centrado con velo semitransparente y copy editorial por encima.
 
 Los cinco iconos del header están en `public/brand/header-icons/` como SVG de trazados transparentes derivados de `public/brand/stack/Iconos-header.png`. El original permanece intacto y cada enlace conserva su etiqueta visible.
+
+Cada Case Study reúne el problema, tecnologías con su función, contexto y arquitectura, galería real y características documentadas. El visor permite seleccionar miniaturas, avanzar/retroceder sin autoplay y ampliar la captura en un diálogo accesible; Escape cierra el diálogo y devuelve el foco. La captura del chatbot sigue siendo la primera de Mantenimiento. Las funciones en desarrollo están rotuladas y no se afirman métricas ni resultados no documentados.
+
+`public/brand/technology-icons/` contiene diez SVG transparentes derivados de `public/brand/project-icons/tecnologias_icon.png`. Los símbolos que se identifican con seguridad se asocian a tecnologías dentro de sus Case Studies; `source-03`, `source-06` y `source-10` quedan como fuentes sin etiquetar ni asignación. El fondo se elimina por conectividad desde los bordes, sin borrar regiones negras encerradas.
 
 `public/brand/roman.webp` mantiene el retrato fotográfico original y se presenta como rectángulo editorial, sin máscara ni alteración de sus píxeles. `roman.svg` es un contenedor con raster embebido, **no** una vectorización de la cara. Ver `public/brand/README.md`.
 
@@ -59,6 +65,8 @@ python -m venv .venv-assets
 .\.venv-assets\Scripts\python.exe -m pip install vtracer==0.6.15
 npm run assets
 ```
+
+Para regenerar sólo los diez iconos tecnológicos, con el entorno VTracer preparado, usar `npm run assets:technologies`.
 
 Los PNG originales permanecen sin modificaciones en el repositorio y no se copian al build. Las paletas de las ilustraciones y los píxeles de la fotografía son contenido gráfico, no colores de UI.
 
@@ -82,3 +90,10 @@ Los PNG originales permanecen sin modificaciones en el repositorio y no se copia
 Referencias técnicas: [Tailwind + Vite](https://tailwindcss.com/docs/installation/using-vite), [tokens de Tailwind](https://tailwindcss.com/docs/theme), [VTracer](https://github.com/visioncortex/vtracer).
 
 La dirección y el inventario de contenido están documentados en `RomanVault/Proyectos/Portfolio`.
+
+## Case Studies — 2026-09-19
+
+- Se reemplazó la estructura de nueve capítulos por cinco secciones y navegación interna accesible.
+- Las cuatro rutas usan tres capturas seleccionadas en un visor con miniaturas, límites de navegación, ampliación y cierre por Escape. Mantenimiento conserva el chatbot como primera imagen.
+- Las características se limitan a la evidencia del repositorio/capturas; el trabajo preventivo de Mantenimiento conserva la marca «EN DESARROLLO» donde corresponde.
+- Se separaron diez SVG sin raster embebido; los tres símbolos no identificados permanecen sin asociación. `npm run build`, `npm run check` y `git diff --check` pasan. QA interactivo de selección, extremos del visor, diálogo y foco: aprobado en desktop. No se realizó deploy manual.

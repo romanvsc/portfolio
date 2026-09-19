@@ -10,3 +10,7 @@ export function footer() {
 export function dorito(pose, message, id) {
   return `<details class="dorito" id="dorito-${id}"><summary aria-label="Un comentario de Dorito: ${message}"><img src="/brand/dorito/${pose}.webp" width="440" height="380" alt="Dorito ${pose}, mascota del portfolio" loading="lazy" decoding="async"><span class="meta">DORITO ＋</span></summary><p>${message}</p></details>`;
 }
+export function doritoCompanion() {
+  const message = 'Hola, soy Dorito, la mascota de Román. Estoy en su portfolio porque lo acompaño en sus tardes de programación.';
+  return `<details class="dorito dorito-companion" id="dorito-companion"><summary aria-label="Mostrar el mensaje de Dorito" aria-controls="dorito-companion-message"><span class="dorito-companion-art" aria-hidden="true"><img src="/brand/dorito/dorito-acostado.svg" width="440" height="440" alt="" decoding="async"></span></summary><p class="dorito-companion-message" id="dorito-companion-message" role="status">${message}</p></details>`;
+}

@@ -10,6 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "assets": "node scripts/prepare-assets.mjs",
+    "assets:technologies": "node scripts/prepare-technology-icons.mjs",
     "check": "node scripts/check.mjs"
   },
   "dependencies": {

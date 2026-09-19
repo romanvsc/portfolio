@@ -19,7 +19,7 @@ export function initMotion() {
         .from('.portrait-index', { clipPath: 'inset(0 100% 0 0)', x: 12, duration: .45, clearProps: 'clipPath,transform' }, .42)
         .from('.hero-role', { clipPath: 'inset(0 100% 0 0)', x: -12, duration: .5, clearProps: 'clipPath,transform' }, .46)
         .from('.hero-claim', { clipPath: 'inset(0 0 100% 0)', y: 16, duration: .5, clearProps: 'clipPath,transform' }, .5)
-        .from('#dorito-hero', { y: 16, rotation: -6, duration: .48, clearProps: 'transform' }, .58)
+        .from('#dorito-companion', { y: 16, rotation: -2, duration: .48, clearProps: 'transform' }, .58)
         .from('.scroll-link', { clipPath: 'inset(0 0 100% 0)', y: -8, duration: .4, clearProps: 'clipPath,transform' }, .62);
       if (conditions.desktop) {
         gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: .6 } })
@@ -28,7 +28,7 @@ export function initMotion() {
           .to('.hero-portrait', { xPercent: -7, yPercent: 5, scale: 1.04, ease: 'none' }, 0)
           .to('.hero-portrait img', { scale: 1.1, yPercent: 6, ease: 'none' }, 0)
           .to('.portrait-index', { yPercent: -30, opacity: .25, ease: 'none' }, 0)
-          .to('#dorito-hero', { yPercent: 45, autoAlpha: 0, ease: 'none' }, 0)
+          .to('#dorito-companion', { yPercent: 45, autoAlpha: 0, ease: 'none' }, 0)
           .to('.hero-editorial', { clipPath: 'inset(0 0 20% 0)', ease: 'none' }, 0);
       }
     }
@@ -58,11 +58,79 @@ export function initMotion() {
       clipPath: 'inset(0 0 100% 0)', y: 16, duration: .7, ease: 'power3.out', clearProps: 'all',
       immediateRender: false, scrollTrigger: { trigger: heading, start: 'top 94%', once: true },
     }));
-    document.querySelectorAll('.stack-card').forEach((card, index) => gsap.from(card, {
-      clipPath: 'inset(0 0 100% 0)', y: 24, rotation: index % 2 ? 3 : -3, duration: .55, delay: index * .04, ease: 'power3.out', clearProps: 'clipPath,transform',
-      immediateRender: false, scrollTrigger: { trigger: card, start: 'top 92%', once: true },
-    }));
-    document.querySelectorAll('.dorito summary').forEach((item) => {
+    const stackGestures = {
+      php: { x: -120, clipPath: 'inset(0 100% 0 0)', duration: .72, ease: 'power3.out' },
+      javascript: { y: -90, rotation: 5, clipPath: 'inset(0 0 100% 0)', duration: .62, ease: 'power3.out' },
+      vue: { y: 22, clipPath: 'inset(100% 0 0 0)', duration: .78, ease: 'power3.out' },
+      css: { x: 72, rotation: 8, clipPath: 'inset(0 0 0 100%)', duration: .66, ease: 'back.out(1.1)' },
+      sql: { x: -100, clipPath: 'inset(0 100% 0 0)', duration: .7, ease: 'power3.out' },
+    };
+    document.querySelectorAll('.stack-piece').forEach((piece) => {
+      const gesture = stackGestures[piece.dataset.stackItem];
+      const surface = piece.querySelector('.stack-piece-surface');
+      const media = piece.querySelector('.stack-piece-media');
+      if (gesture && surface) gsap.from(surface, {
+        ...gesture, clearProps: 'clipPath,transform', immediateRender: false,
+        scrollTrigger: { trigger: piece, start: 'top 88%', once: true },
+      });
+      if (media) {
+        const nudge = gsap.quickTo(media, 'x', { duration: .24, ease: 'power2.out' });
+        piece.addEventListener('focusin', () => nudge(6), { signal });
+        piece.addEventListener('focusout', () => nudge(0), { signal });
+        if (conditions.fine) {
+          piece.addEventListener('pointerenter', () => nudge(6), { signal });
+          piece.addEventListener('pointerleave', () => nudge(0), { signal });
+        }
+      }
+    });
+    const casePage = document.querySelector('.case-page');
+    if (casePage) {
+      const caseProject = projects.find((project) => casePage.classList.contains(`theme-${project.id}`));
+      const caseAccent = tokens[caseProject?.theme || 'production'];
+      const chapters = [...casePage.querySelectorAll('[data-case-chapter]')];
+      const navLinks = [...casePage.querySelectorAll('[data-case-nav]')];
+      const caseGestures = {
+        problem: { x: -32, clipPath: 'inset(0 100% 0 0)' },
+        technologies: { y: 24, clipPath: 'inset(100% 0 0 0)' },
+        about: { y: 24, clipPath: 'inset(0 0 100% 0)' },
+        gallery: { x: 36, clipPath: 'inset(0 0 0 100%)' },
+        features: { x: 28, clipPath: 'inset(0 100% 0 0)' },
+      };
+      const setActiveChapter = (number) => {
+        navLinks.forEach((link) => {
+          const active = link.dataset.caseNav === number;
+          if (active) link.setAttribute('aria-current', 'step');
+          else link.removeAttribute('aria-current');
+        });
+      };
+      chapters.forEach((chapter) => {
+        const kind = chapter.className.match(/case-chapter--([a-z]+)/)?.[1];
+        const body = chapter.querySelector('[data-case-reveal]');
+        const gesture = caseGestures[kind];
+        if (body && gesture) gsap.from(body, {
+          ...gesture, duration: .72, ease: 'power3.out', clearProps: 'clipPath,transform', immediateRender: false,
+          scrollTrigger: { trigger: chapter, start: 'top 84%', once: true },
+        });
+        gsap.from(chapter.querySelector('.case-chapter-heading h2'), {
+          clipPath: 'inset(0 0 100% 0)', y: 18, duration: .58, ease: 'power3.out', clearProps: 'clipPath,transform', immediateRender: false,
+          scrollTrigger: { trigger: chapter, start: 'top 90%', once: true },
+        });
+        gsap.fromTo(chapter, { borderBottomColor: tokens.ink }, { borderBottomColor: caseAccent, duration: .45, ease: 'none', immediateRender: false, scrollTrigger: { trigger: chapter, start: 'top 72%', end: 'top 45%', scrub: .35 } });
+        ScrollTrigger.create({
+          trigger: chapter,
+          start: 'top 80%',
+          end: 'bottom 25%',
+          onEnter: () => setActiveChapter(chapter.dataset.caseChapter),
+          onEnterBack: () => setActiveChapter(chapter.dataset.caseChapter),
+        });
+      });
+      casePage.querySelectorAll('[data-case-line]').forEach((line) => gsap.from(line, {
+        scaleX: 0, transformOrigin: 'left center', duration: .45, ease: 'power2.out', clearProps: 'transform', immediateRender: false,
+        scrollTrigger: { trigger: line.closest('.case-chapter'), start: 'top 72%', once: true },
+      }));
+      navLinks.forEach((link) => link.addEventListener('click', () => setActiveChapter(link.dataset.caseNav), { signal }));
+    }
+    document.querySelectorAll('.dorito:not(.dorito-companion) summary').forEach((item) => {
       const tilt = gsap.quickTo(item, 'rotation', { duration: .3 });
       item.addEventListener('pointerenter', () => tilt(-4), { signal });
       item.addEventListener('pointerleave', () => tilt(0), { signal });

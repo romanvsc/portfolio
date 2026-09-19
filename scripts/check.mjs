@@ -3,6 +3,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { projects, profile } from '../src/data.js';
 import { home } from '../src/sections/home.js';
 import { caseStudy, chapterTitles } from '../src/sections/case-study.js';
+import { caseStudyContent } from '../src/sections/case-study/content.js';
 import { sceneConfig } from '../src/scene-config.js';
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
@@ -21,6 +22,8 @@ for (const file of [...sourceFiles, 'index.html', 'blender/generate-portfolio-co
   verify(!/(?:color|background|fill|stroke)\s*:\s*(?:white|black|red|green|blue)\b/i.test(content), `${file}: no named UI colors`);
 }
 const css = await read('src/style.css');
+verify(css.includes('.dorito-companion {') && css.includes('bottom: calc(100% - 24px)'), 'Sleeping Dorito rests on the hero line');
+verify(!css.includes('.dorito-companion-eye'), 'Sleeping Dorito has no eye animation overlay');
 verify(css.includes('font-family: "Rosehot"') && css.includes('/fonts/rosehot-free-version/Rosehot.ttf'), 'Local Rosehot display font configured');
 verify(!css.includes('Arial Black'), 'Arial Black removed as display font');
 verify((await readFile(new URL('public/fonts/rosehot-free-version/Rosehot.ttf', root))).byteLength > 10000, 'Local Rosehot font asset present');
@@ -42,6 +45,11 @@ for (const pose of manifest.poses) {
   verify(!/<script|onload=|https?:\/\/(?!www.w3.org)/i.test(svg), `${pose.pose}: no executable or remote content`);
   verify(svg.includes('fill="var(--dorito-'), `${pose.pose}: asset palette tokens`);
 }
+verify(manifest.companion?.path === '/brand/dorito/dorito-acostado.svg', 'Sleeping Dorito companion manifest');
+const companionSvg = await read(`public${manifest.companion.path}`);
+verify(companionSvg.includes('<path') && !companionSvg.includes('<image'), 'Sleeping Dorito is vector-only');
+verify(companionSvg.includes('viewBox=') && !/<script|onload=|https?:\/\/(?!www.w3.org)/i.test(companionSvg), 'Sleeping Dorito SVG is scalable and safe');
+verify(companionSvg.includes('fill="var(--dorito-') && manifest.companion.bytes < 1000000, 'Sleeping Dorito palette and size bounded');
 verify(Array.isArray(manifest.stack) && manifest.stack.map((item) => item.pose).join(',') === 'php,javascript,vue,css,sql', 'Five technology illustrations manifest');
 for (const scene of manifest.stack) {
   const svg = await read(`public${scene.path}`);
@@ -71,6 +79,16 @@ for (const icon of manifest.headerIcons) {
   verify(svg.includes('fill="var(--header-icon-'), `${icon.id}: header icon palette tokens`);
   verify(icon.bytes < 50000, `${icon.id}: header icon bounded`);
 }
+verify(Array.isArray(manifest.technologyIcons) && manifest.technologyIcons.length === 10, 'Ten technology source marks registered');
+verify(manifest.technologyIcons.map((item) => item.id).join(',') === 'vue,php,source-03,javascript,python,source-06,supabase,docker,laravel,source-10', 'Technology marks retain their source-sheet order');
+for (const icon of manifest.technologyIcons) {
+  const svg = await read(`public${icon.path}`);
+  verify(svg.includes('<path') && !svg.includes('<image'), `${icon.id}: technology icon is vector-only`);
+  verify(svg.includes('viewBox=') && icon.transparent === true, `${icon.id}: technology icon scales on transparent canvas`);
+  verify(!/<rect\b|<script|onload=|https?:\/\/(?!www.w3.org)/i.test(svg), `${icon.id}: transparent technology SVG has no background or executable content`);
+  verify(svg.includes('fill="var(--technology-icon-'), `${icon.id}: technology illustration palette is internal`);
+  verify(icon.bytes < 100000, `${icon.id}: technology SVG bounded`);
+}
 verify((await read('public/brand/roman.svg')).includes('data:image/webp;base64,'), 'Portrait wrapper clearly remains raster');
 const glb = await readFile(new URL('public/models/portfolio-studio.glb', root));
 verify(glb.readUInt32LE(0) === 0x46546c67, 'Studio GLB header');
@@ -79,20 +97,59 @@ const builtCss = await read(`dist/assets/${files.find((name) => name.endsWith('.
 verify(!builtCss.includes('@apply') && !builtCss.includes('@theme'), 'Tailwind compiled, no raw directives');
 verify(builtCss.includes('.text-link') && builtCss.includes('--color-brand'), 'Semantic interactive styles built');
 verify(projects.map((p) => p.id).join(',') === 'registro,ipac,gimnasio,mantenimiento', 'Approved four routes, IPAC retained');
-verify(chapterTitles.length === 9, 'Nine case chapters');
+verify(chapterTitles.length === 5, 'Five case chapters');
+const normalizedChapterTitles = chapterTitles.map((title) => title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLocaleLowerCase('es'));
+verify(normalizedChapterTitles.join('|') === 'problema|tecnologias utilizadas|sobre el proyecto|galeria del proyecto|caracteristicas', 'Case chapter titles match the approved order');
 for (const project of projects) {
   const html = caseStudy(project);
-  verify((html.match(/class="case-chapter"/g) || []).length === 9, `${project.id}: all chapters rendered`);
-  verify((html.match(/class="screenshot-card(?: |")/g) || []).length === 3, `${project.id}: essential screenshot gallery`);
+  verify((html.match(/class="case-chapter(?: |")/g) || []).length === 5, `${project.id}: all five chapters rendered`);
+  verify((html.match(/data-case-chapter="/g) || []).length === 5, `${project.id}: five chapter data hooks`);
+  verify((html.match(/data-case-nav="/g) || []).length === 5, `${project.id}: five internal navigation links`);
+  verify(['problem', 'technologies', 'about', 'gallery', 'features'].every((kind) => html.includes(`case-chapter--${kind}`)), `${project.id}: required chapter order and types`);
+  verify(html.indexOf('case-chapter--problem') < html.indexOf('case-chapter--technologies') && html.indexOf('case-chapter--technologies') < html.indexOf('case-chapter--about') && html.indexOf('case-chapter--about') < html.indexOf('case-chapter--gallery') && html.indexOf('case-chapter--gallery') < html.indexOf('case-chapter--features'), `${project.id}: chapters follow approved editorial sequence`);
+  verify(html.includes('case-hero') && !html.includes('case-featured-capture'), `${project.id}: editorial cover keeps screenshots in the gallery`);
+  verify((html.match(/data-case-gallery/g) || []).length === 1 && (html.match(/data-gallery-item/g) || []).length === 3, `${project.id}: one interactive gallery with three captures`);
+  verify(html.includes('<dialog') && html.includes('data-gallery-open') && html.includes('data-gallery-close'), `${project.id}: accessible enlarged image dialog controls`);
+  verify(html.includes('data-gallery-prev') && html.includes('disabled>') && html.includes('data-gallery-next'), `${project.id}: gallery navigation has bounded controls`);
+  verify(!html.includes('autoplay') && !html.includes('screenshot-card'), `${project.id}: no autoplay or legacy static gallery cards`);
+  verify(html.includes('case-architecture-node') && html.includes('case-architecture-arrow'), `${project.id}: project architecture diagram`);
+  verify(html.includes('case-feature-status') || project.id !== 'mantenimiento', `${project.id}: implementation status is represented when needed`);
+  verify(html.includes('NEXT /'), `${project.id}: next project transition`);
   verify(html.includes('IDENTIDAD VISUAL / NO ES UNA CAPTURA'), `${project.id}: identity visual label`);
   verify(!html.includes('alt="undefined"'), `${project.id}: screenshot alt text resolved`);
   verify(project.theme in tokens && `${project.theme}-soft` in tokens, `${project.id}: theme tokens`);
   verify(Boolean(project.architecture), `${project.id}: documented architecture`);
-  verify(project.media.gallery.length === 3 && project.media.icon.endsWith('.svg'), `${project.id}: selected media set`);
+  verify(project.media.gallery.length === 3 && new Set(project.media.gallery.map(({ src }) => src)).size === 3 && project.media.icon.endsWith('.svg'), `${project.id}: three unique selected captures and project icon`);
+  const content = caseStudyContent(project);
+  verify(content.technologies.length === project.stack.length, `${project.id}: every stack technology has a role description`);
+  const technologyAliases = { Vue: 'Vue.js', 'Vue 3': 'Vue.js', 'Vue.js': 'Vue.js', PHP: 'PHP', Docker: 'Docker', Supabase: 'Supabase' };
+  for (const item of content.technologies) {
+    verify(!item.icon || manifest.technologyIcons.some((icon) => icon.id === item.icon && icon.technology === technologyAliases[item.name]), `${project.id}: technology icon is confidently associated with ${item.name}`);
+    if (item.icon) verify(html.includes(`/brand/technology-icons/${item.icon}.svg`), `${project.id}: mapped technology icon appears on its case page`);
+  }
+  verify(content.features.length > 0 && !html.includes('PENDIENTE DE DOCUMENTAR'), `${project.id}: features are documented without placeholder claims`);
 }
+const maintenanceCase = caseStudy(projects.find((project) => project.id === 'mantenimiento'));
+verify(maintenanceCase.indexOf('Chatbot Asistente IA') < maintenanceCase.indexOf('Dashboard de Mantenimiento'), 'Mantenimiento chatbot is the first gallery capture');
+const maintenanceFeatures = caseStudyContent(projects.find((project) => project.id === 'mantenimiento')).features;
+verify(maintenanceFeatures.some(({ status }) => status === 'in-progress') && maintenanceCase.includes('EN DESARROLLO'), 'Maintenance features in progress are explicitly labelled');
+const caseStyles = await read('src/style.css');
+verify(caseStyles.includes('.case-flow-block {') && caseStyles.includes('overflow-wrap: anywhere'), 'Case problem flow wraps safely without desktop overflow');
+verify(caseStyles.includes('.case-nav { position: sticky;') && caseStyles.includes('grid-template-columns: repeat(3, minmax(0, 1fr))'), 'Case navigation has desktop sticky and mobile layouts');
+verify(caseStyles.includes('.case-architecture-support {') && caseStyles.includes('.case-gallery-dialog {'), 'Case architecture and accessible gallery dialog are styled');
+verify(caseStyles.includes('.case-gallery-thumb:focus-visible') && caseStyles.includes('.case-gallery-step:disabled'), 'Gallery keyboard focus and endpoint states are visible');
+verify(caseStyles.includes('.case-technology-icon') && caseStyles.includes('.case-feature-status.is-in-progress'), 'Technology identities and feature progress have dedicated styles');
+verify(caseStyles.includes('.case-gallery { min-width: 0; }') && caseStyles.includes('max-width: 100%') && caseStyles.includes('overflow-x: auto;'), 'Gallery media and thumbnail rail constrain narrow layouts');
+const interactionSource = await read('src/components/interactions.js');
+verify(interactionSource.includes("gallery.parentElement?.querySelector('[data-gallery-status]')"), 'Gallery status updates from its chapter container');
+verify(interactionSource.includes('items[currentIndex].dataset') && interactionSource.includes('dialog.showModal()'), 'Enlarged view opens the currently selected capture');
+verify(interactionSource.includes("event.key !== 'ArrowLeft'") && interactionSource.includes('returnFocus?.focus({ preventScroll: true })'), 'Gallery supports keyboard selection and returns focus after closing');
 const homepage = home();
 verify(homepage.includes('ESTUDIANTE DE') && homepage.includes('ANALISTA DE SISTEMAS'), 'Student profile remains explicit');
 verify(homepage.includes('class="name-first"') && homepage.includes('class="name-last"') && homepage.includes('hero-portrait'), 'Hero editorial layers retained');
+verify(homepage.includes('dorito-companion') && homepage.includes('/brand/dorito/dorito-acostado.svg'), 'Sleeping Dorito companion rendered in hero');
+verify(!homepage.includes('dorito-companion-eye'), 'Sleeping Dorito companion has no animated eye layer');
+verify(homepage.includes('Hola, soy Dorito, la mascota de Román. Estoy en su portfolio porque lo acompaño en sus tardes de programación.'), 'Sleeping Dorito message exact');
 verify(!homepage.includes('Registro Personal'), 'Excluded project absent');
 verify((homepage.match(/data-project=/g) || []).length === 4, 'Four editorial project sections');
 verify((homepage.match(/project-icons\//g) || []).length === 4, 'Four project icons rendered');
@@ -100,10 +157,21 @@ verify((homepage.match(/project-icon-background/g) || []).length === 4, 'Four pr
 verify((homepage.match(/project-art-overlay/g) || []).length === 4, 'Four project overlay layers rendered');
 verify((homepage.match(/art-copy-plate/g) || []).length === 4, 'Four readable project copy plates rendered');
 verify((homepage.match(/CAPTURA REAL/g) || []).length === 0, 'Screenshots reserved for project pages');
+verify(!homepage.includes('/brand/technology-icons/'), 'Technology marks appear only inside project cases');
 verify(!homepage.includes('Captura%20de%20pantalla%202026-09-17%20214602.png'), 'Mantenimiento screenshot absent from homepage');
 verify(!homepage.includes('screenshot-card') && !homepage.includes('project-screenshot'), 'Homepage contains no screenshot gallery');
 verify(!homepage.includes('ILUSTRACIÓN CONCEPTUAL') && !homepage.includes('screenshot-placeholder'), 'Conceptual project visuals replaced');
-verify((homepage.match(/data-stack-item=/g) || []).length === 5, 'Five irregular stack modules');
+verify((homepage.match(/data-stack-item=/g) || []).length === 5, 'Five linear stack modules');
+verify(homepage.includes('class="stack-row"'), 'Stack renders in a single linear row');
+verify(homepage.includes('stack-piece--php') && homepage.includes('stack-piece--javascript') && homepage.includes('stack-piece--vue') && homepage.includes('stack-piece--css') && homepage.includes('stack-piece--sql'), 'Five stack variants rendered');
+verify(!homepage.includes('stack-card') && !homepage.includes('stack-collage'), 'Previous card and collage structures removed');
+verify((homepage.match(/data-stack-gesture=/g) || []).length === 5, 'Five stack gestures declared');
+verify(!homepage.includes('stack-piece-word') && homepage.includes('stack-piece-top') && homepage.includes('stack-piece-copy') && homepage.includes('stack-piece-media'), 'Stack row keeps metadata, illustrations and names readable');
+verify(homepage.includes('data-stack-gesture="SLIDE"') && homepage.includes('data-stack-gesture="DROP"') && homepage.includes('data-stack-gesture="REVEAL"') && homepage.includes('data-stack-gesture="SNAP"') && homepage.includes('data-stack-gesture="CUT"'), 'Stack gestures declared');
+const stackStyles = await read('src/style.css');
+verify(stackStyles.includes('.stack-row {') && stackStyles.includes('grid-template-columns: repeat(5, minmax(0, 1fr))') && stackStyles.includes('grid-template-columns: repeat(3, minmax(0, 1fr))'), 'Stack row has desktop and tablet layouts');
+verify(stackStyles.includes('.stack-piece--php') && stackStyles.includes('.stack-piece--javascript') && stackStyles.includes('.stack-piece--vue') && stackStyles.includes('.stack-piece--css') && stackStyles.includes('.stack-piece--sql'), 'Stack row has per-technology treatments');
+verify(stackStyles.includes('opacity: .82') && stackStyles.includes('filter: saturate(.82)'), 'Stack inactive pieces use subtle contrast attenuation');
 verify(!homepage.includes('activate-scene') && !homepage.includes('studio-section'), '3D experiment removed from home');
 verify((await read('src/components/studio.js')).includes("import('../scene.js')"), 'Three remains a lazy chunk');
 verify(sceneConfig.pixelRatioLimit <= 1.5, 'DPR capped');
@@ -114,6 +182,12 @@ verify((layout.match(/header-icons\//g) || []).length === 1 && layout.includes('
 verify(layout.includes('alt=""') && layout.includes('aria-hidden="true"'), 'Header icons are decorative beside visible labels');
 verify(!layout.includes('<dialog') && !layout.includes('menu-toggle'), 'Fullscreen menu removed');
 verify((await read('src/animations/index.js')).includes('if (!conditions.motion) return'), 'Reduced motion excludes GSAP effects');
+const animationSource = await read('src/animations/index.js');
+verify(animationSource.includes('stackGestures') && animationSource.includes("clipPath: 'inset(100% 0 0 0)'"), 'Stack uses differentiated GSAP gestures');
+verify(!animationSource.includes("gsap.from(card") && animationSource.includes('stack-piece-media'), 'Stack motion targets editorial pieces and Dorito media');
+verify(animationSource.includes('caseGestures') && animationSource.includes('data-case-line'), 'Case Studies use dedicated GSAP gestures and diagram lines');
+verify(animationSource.includes('data-case-nav') && animationSource.includes('aria-current'), 'Case navigation tracks the active chapter');
+verify(!(await read('src/animations/index.js')).includes('dorito-companion-eye') && !(await read('src/animations/index.js')).includes('blink'), 'Sleeping Dorito eye animation removed');
 function luminance(hex) {
   const channels = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((n) => n <= .04045 ? n / 12.92 : ((n + .055) / 1.055) ** 2.4);
   return channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722;

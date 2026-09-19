@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { optimize } from 'svgo';
+import { generateTechnologyIcons } from './prepare-technology-icons.mjs';
 
 const root = new URL('../', import.meta.url);
 const at = (path) => fileURLToPath(new URL(path, root));
@@ -64,6 +65,22 @@ for (const pose of poses) {
   await writeFile(output, svg);
   manifest.push({ pose: pose.id, path: `/brand/dorito/${pose.id}.svg`, type: 'vector-paths', bytes: Buffer.byteLength(svg), colors: colors.length });
 }
+const companionBuffer = await sharp(at('public/brand/dorito/dorito_acostado.png')).resize({ width: 440 }).png().toBuffer();
+const companionInput = at('.asset-cache/dorito-acostado.png');
+const companionOutput = at('public/brand/dorito/dorito-acostado.svg');
+await writeFile(companionInput, companionBuffer);
+const companionPython = at('.venv-assets/Scripts/python.exe');
+const companionResult = spawnSync(companionPython, [at('scripts/vectorize.py'), companionInput, companionOutput], { encoding: 'utf8' });
+if (companionResult.status !== 0) throw new Error(companionResult.stderr || companionResult.stdout || 'Vector conversion failed: dorito-acostado');
+let companionSvg = optimize(await readFile(companionOutput, 'utf8'), { multipass: true, plugins: [{ name: 'preset-default', params: { overrides: { convertColors: false } } }] }).data;
+const companionColors = [...new Set([...companionSvg.matchAll(/fill="(#[0-9a-fA-F]+)"/g)].map((match) => match[1]))];
+for (const [index, color] of companionColors.entries()) companionSvg = companionSvg.replaceAll(`fill="${color}"`, `fill="var(--dorito-${index})"`);
+const companionPalette = companionColors.map((color, index) => `--dorito-${index}:${color}`).join(';');
+const companionDimensions = /width="([\d.]+)" height="([\d.]+)"/.exec(companionSvg);
+if (!companionSvg.includes('viewBox=') && companionDimensions) companionSvg = companionSvg.replace('<svg ', `<svg viewBox="0 0 ${companionDimensions[1]} ${companionDimensions[2]}" `);
+companionSvg = companionSvg.replace('<svg ', `<svg role="img" aria-label="Dorito acostado" style="${companionPalette}" `);
+await writeFile(companionOutput, companionSvg);
+const companionManifest = { id: 'dorito-acostado', path: '/brand/dorito/dorito-acostado.svg', source: '/brand/dorito/dorito_acostado.png', type: 'vector-paths', bytes: Buffer.byteLength(companionSvg), colors: companionColors.length };
 const stackManifest = [];
 const stackMetadata = await sharp(stackSheet).metadata();
 for (const scene of stackScenes) {
@@ -146,5 +163,6 @@ for (const icon of headerIcons) {
 const photo = await sharp(at('ChatGPT Image 16 sept 2026, 23_27_44.png')).resize(720, 720).webp({ quality: 88 }).toBuffer();
 await writeFile(at('public/brand/roman.webp'), photo);
 await writeFile(at('public/brand/roman.svg'), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" role="img" aria-labelledby="title"><title id="title">Retrato de Román — fotografía raster embebida, no trazados vectoriales</title><image width="720" height="720" href="data:image/webp;base64,${photo.toString('base64')}"/></svg>`);
-await writeFile(at('public/brand/assets.json'), JSON.stringify({ poses: manifest, stack: stackManifest, projectIcons: projectIconManifest, headerIcons: headerIconManifest, portrait: { webp: '/brand/roman.webp', svg: '/brand/roman.svg', type: 'embedded-raster' } }, null, 2));
-console.log(JSON.stringify({ poses: manifest, stack: stackManifest, projectIcons: projectIconManifest, headerIcons: headerIconManifest }, null, 2));
+const technologyIconManifest = await generateTechnologyIcons();
+await writeFile(at('public/brand/assets.json'), JSON.stringify({ poses: manifest, companion: companionManifest, stack: stackManifest, projectIcons: projectIconManifest, headerIcons: headerIconManifest, technologyIcons: technologyIconManifest, portrait: { webp: '/brand/roman.webp', svg: '/brand/roman.svg', type: 'embedded-raster' } }, null, 2));
+console.log(JSON.stringify({ poses: manifest, companion: companionManifest, stack: stackManifest, projectIcons: projectIconManifest, headerIcons: headerIconManifest, technologyIcons: technologyIconManifest }, null, 2));

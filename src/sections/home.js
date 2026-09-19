@@ -1,21 +1,21 @@
 import { projects, profile } from '../data.js';
-import { dorito, arrow, external } from '../components/layout.js';
+import { dorito, doritoCompanion, arrow, external } from '../components/layout.js';
 import { projectSection } from './projects.js';
 
 export function hero() {
-  return `<section class="hero shell" id="inicio" aria-labelledby="hero-title"><div class="hero-topline meta"><span>SYSTEMS × DESIGN × CODE</span><span>PERSONAS / PROCESOS / INTERFACES</span></div><div class="hero-editorial"><h1 id="hero-title"><span class="name-first">ROMÁN</span><span class="name-last">VOGEL<span class="hero-dot">.</span></span></h1><figure class="hero-portrait"><img src="/brand/roman.webp" width="720" height="720" fetchpriority="high" alt="Retrato de Román Vogel Corach"></figure><p class="portrait-index meta">RV — 01<br>EL LADO HUMANO<br>DEL CÓDIGO.</p></div><div class="hero-bottom"><p class="hero-role meta">ESTUDIANTE DE<br>ANALISTA DE SISTEMAS<br><span>& DESARROLLADOR WEB</span></p><p class="hero-claim">Construyo sistemas digitales<br>para problemas del mundo real.</p>${dorito('saludando', 'Oh, llegaste.', 'hero')}<a class="scroll-link meta" href="#proyectos">SCROLL <span aria-hidden="true">↓</span></a></div></section>`;
+  return `<section class="hero shell" id="inicio" aria-labelledby="hero-title"><div class="hero-topline meta"><span>SYSTEMS × DESIGN × CODE</span><span>PERSONAS / PROCESOS / INTERFACES</span></div><div class="hero-editorial"><h1 id="hero-title"><span class="name-first">ROMÁN</span><span class="name-last">VOGEL<span class="hero-dot">.</span></span></h1><figure class="hero-portrait"><img src="/brand/roman.webp" width="720" height="720" fetchpriority="high" alt="Retrato de Román Vogel Corach"></figure><p class="portrait-index meta">RV — 01<br>EL LADO HUMANO<br>DEL CÓDIGO.</p></div><div class="hero-bottom">${doritoCompanion()}<p class="hero-role meta">ESTUDIANTE DE<br>ANALISTA DE SISTEMAS<br><span>& DESARROLLADOR WEB</span></p><p class="hero-claim">Construyo sistemas digitales<br>para problemas del mundo real.</p><a class="scroll-link meta" href="#proyectos">SCROLL <span aria-hidden="true">↓</span></a></div></section>`;
 }
 
 const stackItems = [
-  ['php', 'PHP', 'BACKEND', 'Lógica de negocio y aplicaciones del lado del servidor.'],
-  ['javascript', 'JavaScript', 'INTERACTION', 'Comportamiento, estados e interacción en la web.'],
-  ['vue', 'Vue.js', 'FRONTEND', 'Interfaces por componentes para procesos concretos.'],
-  ['css', 'CSS', 'UI', 'Jerarquía, sistemas de tokens y layouts adaptables.'],
-  ['sql', 'SQL', 'DATA', 'Relaciones, consultas y estructura para los datos.'],
+  ['php', 'PHP', 'BACKEND', 'Lógica de negocio y aplicaciones del lado del servidor.', 'SLIDE'],
+  ['javascript', 'JavaScript', 'INTERACTION', 'Comportamiento, estados e interacción en la web.', 'DROP'],
+  ['vue', 'Vue.js', 'FRONTEND', 'Interfaces por componentes para procesos concretos.', 'REVEAL'],
+  ['css', 'CSS', 'UI', 'Jerarquía, sistemas de tokens y layouts adaptables.', 'SNAP'],
+  ['sql', 'SQL', 'DATA', 'Relaciones, consultas y estructura para los datos.', 'CUT'],
 ];
 
 function stackSection() {
-  return `<section class="stack-section section" id="tecnologias" aria-labelledby="stack-title"><div class="shell"><div class="stack-heading"><div><p class="meta">03 / BUILD WITH</p><h2 id="stack-title">MY<br><em>STACK.</em></h2></div><p class="stack-note">Mis fortalezas: PHP, JavaScript, Vue.js, CSS y SQL.</p></div><div class="stack-collage">${stackItems.map(([id, name, role, description], i) => `<article class="stack-card stack-card--${id}" data-stack-item="${id}"><div class="stack-card-top"><span class="meta">0${i + 1} / ${role}</span><span class="stack-mark" aria-hidden="true">＋</span></div><img src="/brand/stack/${id}.svg" width="440" height="${id === 'css' || id === 'sql' ? '404' : '583'}" alt="Dorito sosteniendo ${name}" loading="lazy" decoding="async"><div class="stack-card-copy"><h3>${name}</h3><p>${description}</p></div></article>`).join('')}</div></div></section>`;
+  return `<section class="stack-section section" id="tecnologias" aria-labelledby="stack-title"><div class="shell"><div class="stack-heading"><div><p class="meta">03 / BUILD WITH</p><h2 id="stack-title">MY<br><em>STACK.</em></h2></div><p class="stack-note">Mis fortalezas: PHP, JavaScript, Vue.js, CSS y SQL.</p></div><div class="stack-row">${stackItems.map(([id, name, role, description, gesture], i) => `<article class="stack-piece stack-piece--${id}" data-stack-item="${id}" data-stack-gesture="${gesture}" tabindex="0" aria-labelledby="stack-${id}-title"><div class="stack-piece-surface"><div class="stack-piece-top"><span class="stack-piece-index meta">0${i + 1} / ${role}</span><span class="stack-piece-gesture meta" aria-hidden="true">${gesture}</span></div><span class="stack-piece-media"><img src="/brand/stack/${id}.svg" width="440" height="${id === 'css' || id === 'sql' ? '404' : '583'}" alt="Dorito sosteniendo ${name}" loading="lazy" decoding="async"></span><div class="stack-piece-copy"><h3 id="stack-${id}-title">${name}</h3><p>${description}</p></div></div></article>`).join('')}</div></div></section>`;
 }
 
 export function home() {
