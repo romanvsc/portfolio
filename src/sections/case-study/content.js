@@ -34,6 +34,9 @@ const technologyIcons = {
   PHP: 'php',
   Docker: 'docker',
   Supabase: 'supabase',
+  MySQL: 'mysql',
+  'MySQL / MariaDB': 'mysql',
+  'CodeIgniter 4': 'codeigniter',
 };
 
 const technologyRoles = {

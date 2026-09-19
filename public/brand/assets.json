@@ -177,114 +177,114 @@
   },
   "technologyIcons": [
     {
-      "id": "vue",
-      "technology": "Vue.js",
-      "path": "/brand/technology-icons/vue.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 1,
+      "id": "codeigniter",
+      "technology": "CodeIgniter",
+      "path": "/brand/technology-icons/codeigniter.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/codeigniter.png",
       "type": "vector-paths",
       "transparent": true,
-      "bytes": 35389,
-      "colors": 77
+      "bytes": 28180,
+      "colors": 70,
+      "sourceDimensions": "234x286"
     },
     {
-      "id": "php",
-      "technology": "PHP",
-      "path": "/brand/technology-icons/php.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 2,
+      "id": "css",
+      "technology": "CSS",
+      "path": "/brand/technology-icons/css.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/css.png",
       "type": "vector-paths",
       "transparent": true,
-      "bytes": 34450,
-      "colors": 112
-    },
-    {
-      "id": "source-03",
-      "technology": null,
-      "path": "/brand/technology-icons/source-03.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 3,
-      "type": "vector-paths",
-      "transparent": true,
-      "bytes": 46708,
-      "colors": 139
-    },
-    {
-      "id": "javascript",
-      "technology": "JavaScript",
-      "path": "/brand/technology-icons/javascript.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 4,
-      "type": "vector-paths",
-      "transparent": true,
-      "bytes": 34855,
-      "colors": 67
-    },
-    {
-      "id": "python",
-      "technology": "Python",
-      "path": "/brand/technology-icons/python.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 5,
-      "type": "vector-paths",
-      "transparent": true,
-      "bytes": 35754,
-      "colors": 97
-    },
-    {
-      "id": "source-06",
-      "technology": null,
-      "path": "/brand/technology-icons/source-06.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 6,
-      "type": "vector-paths",
-      "transparent": true,
-      "bytes": 41656,
-      "colors": 95
-    },
-    {
-      "id": "supabase",
-      "technology": "Supabase",
-      "path": "/brand/technology-icons/supabase.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 7,
-      "type": "vector-paths",
-      "transparent": true,
-      "bytes": 29845,
-      "colors": 84
+      "bytes": 40678,
+      "colors": 92,
+      "sourceDimensions": "245x276"
     },
     {
       "id": "docker",
       "technology": "Docker",
       "path": "/brand/technology-icons/docker.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 8,
+      "source": "/brand/project-icons/tech_icons_separated_clean/docker.png",
       "type": "vector-paths",
       "transparent": true,
-      "bytes": 45576,
-      "colors": 119
+      "bytes": 40729,
+      "colors": 104,
+      "sourceDimensions": "253x244"
     },
     {
-      "id": "laravel",
-      "technology": "Laravel",
-      "path": "/brand/technology-icons/laravel.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 9,
+      "id": "javascript",
+      "technology": "JavaScript",
+      "path": "/brand/technology-icons/javascript.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/javascript.png",
       "type": "vector-paths",
       "transparent": true,
-      "bytes": 30131,
-      "colors": 82
+      "bytes": 30841,
+      "colors": 61,
+      "sourceDimensions": "261x258"
     },
     {
-      "id": "source-10",
-      "technology": null,
-      "path": "/brand/technology-icons/source-10.svg",
-      "source": "/brand/project-icons/tecnologias_icon.png",
-      "sourcePosition": 10,
+      "id": "mysql",
+      "technology": "MySQL",
+      "path": "/brand/technology-icons/mysql.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/mysql.png",
       "type": "vector-paths",
       "transparent": true,
-      "bytes": 24767,
-      "colors": 53
+      "bytes": 43300,
+      "colors": 125,
+      "sourceDimensions": "237x277"
+    },
+    {
+      "id": "php",
+      "technology": "PHP",
+      "path": "/brand/technology-icons/php.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/php.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 37837,
+      "colors": 115,
+      "sourceDimensions": "311x206"
+    },
+    {
+      "id": "python",
+      "technology": "Python",
+      "path": "/brand/technology-icons/python.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/python.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 36250,
+      "colors": 95,
+      "sourceDimensions": "258x272"
+    },
+    {
+      "id": "supabase",
+      "technology": "Supabase",
+      "path": "/brand/technology-icons/supabase.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/supabase.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 22350,
+      "colors": 45,
+      "sourceDimensions": "255x260"
+    },
+    {
+      "id": "tailwind",
+      "technology": "Tailwind CSS",
+      "path": "/brand/technology-icons/tailwind.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/tailwind.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 27643,
+      "colors": 83,
+      "sourceDimensions": "303x213"
+    },
+    {
+      "id": "vue",
+      "technology": "Vue.js",
+      "path": "/brand/technology-icons/vue.svg",
+      "source": "/brand/project-icons/tech_icons_separated_clean/vue.png",
+      "type": "vector-paths",
+      "transparent": true,
+      "bytes": 35125,
+      "colors": 73,
+      "sourceDimensions": "269x268"
     }
   ]
 }

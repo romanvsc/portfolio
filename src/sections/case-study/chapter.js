@@ -9,7 +9,7 @@ function architectureMarkup(content) {
 
 function renderProblem(content) {
   const items = [['01 / CIRCUITO', content.process], ['02 / FRICCIÓN', content.friction], ['03 / NECESIDAD', content.need]];
-  const flow = items.map(([label, text], index) => `${index ? '<span class="case-flow-arrow" aria-hidden="true">↓</span>' : ''}<article class="case-flow-block"><span class="meta">${label}</span><strong>${text}</strong></article>`).join('');
+  const flow = items.map(([label, text], index) => `${index ? '<span class="case-flow-arrow" aria-hidden="true">→</span>' : ''}<article class="case-flow-block"><span class="meta">${label}</span><p>${text}</p></article>`).join('');
   const steps = content.steps.map((step, index) => `<li><span class="meta">0${index + 1}</span><strong>${step}</strong></li>`).join('');
   return `<div class="case-problem"><div class="case-flow">${flow}</div><div class="case-problem-route"><span class="meta">RECORRIDO DEL PROYECTO</span><ol>${steps}</ol></div></div>`;
 }

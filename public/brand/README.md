@@ -23,16 +23,16 @@ Originales conservados en la raíz. Los archivos de esta carpeta se generan con 
 | header-icons/tecnologias.svg | Trazados vectoriales transparentes | Header / Tecnologías |
 | header-icons/sobre-mi.svg | Trazados vectoriales transparentes | Header / Sobre Mí |
 | header-icons/contacto.svg | Trazados vectoriales transparentes | Header / Contacto |
-| technology-icons/vue.svg | Trazados vectoriales transparentes | Case Studies / Vue.js |
-| technology-icons/php.svg | Trazados vectoriales transparentes | Case Studies / PHP |
-| technology-icons/source-03.svg | Trazados vectoriales transparentes | Símbolo de la fuente sin identificar |
-| technology-icons/javascript.svg | Trazados vectoriales transparentes | Case Studies / JavaScript |
-| technology-icons/python.svg | Trazados vectoriales transparentes | Case Studies / Python |
-| technology-icons/source-06.svg | Trazados vectoriales transparentes | Símbolo de la fuente sin identificar |
-| technology-icons/supabase.svg | Trazados vectoriales transparentes | Case Studies / Supabase |
+| technology-icons/codeigniter.svg | Trazados vectoriales transparentes | Case Studies / CodeIgniter |
+| technology-icons/css.svg | Trazados vectoriales transparentes | Catálogo / CSS |
 | technology-icons/docker.svg | Trazados vectoriales transparentes | Case Studies / Docker |
-| technology-icons/laravel.svg | Trazados vectoriales transparentes | Case Studies / Laravel |
-| technology-icons/source-10.svg | Trazados vectoriales transparentes | Símbolo de la fuente sin identificar |
+| technology-icons/javascript.svg | Trazados vectoriales transparentes | Catálogo / JavaScript |
+| technology-icons/mysql.svg | Trazados vectoriales transparentes | Case Studies / MySQL |
+| technology-icons/php.svg | Trazados vectoriales transparentes | Case Studies / PHP |
+| technology-icons/python.svg | Trazados vectoriales transparentes | Catálogo / Python |
+| technology-icons/supabase.svg | Trazados vectoriales transparentes | Case Studies / Supabase |
+| technology-icons/tailwind.svg | Trazados vectoriales transparentes | Catálogo / Tailwind CSS |
+| technology-icons/vue.svg | Trazados vectoriales transparentes | Case Studies / Vue.js |
 | roman.webp | Fotografía optimizada | Retrato principal |
 | roman.svg | Contenedor SVG con WebP embebido | Compatibilidad; NO es un retrato vectorial |
 
@@ -44,7 +44,7 @@ Los cuatro iconos de proyecto provienen de `public/brand/capturas_apps/` y se ve
 
 Los cinco iconos del header provienen de `stack/Iconos-header.png`. El original se preserva; cada símbolo se recorta y vectoriza por separado sobre un canvas transparente, sin raster embebido ni rectángulo de fondo.
 
-Los diez símbolos tecnológicos provienen de `project-icons/tecnologias_icon.png` (conservado intacto). `npm run assets:technologies` toma la hoja 5×2, elimina sólo el fondo negro conectado a los bordes mediante flood fill, mantiene las regiones oscuras interiores y produce SVG transparentes sin `<image>` raster. `assets.json` conserva el número de posición en la hoja y las etiquetas; `source-03`, `source-06` y `source-10` son intencionalmente anónimos porque su identidad no se pudo confirmar. Los iconos se muestran junto a tecnologías asociadas con seguridad dentro de los Case Studies, no en las tarjetas de la Home.
+Los diez iconos tecnológicos se generan desde PNG individuales en `project-icons/tech_icons_separated_clean/`. Los originales conservan su alfa y no se modifican. `npm run assets:technologies` verifica la transparencia, traza cada marca como SVG con `viewBox`, paleta interna y sin `<image>` raster. La hoja anterior `project-icons/tecnologias_icon.png` y los SVG derivados de ella se conservan; el manifiesto activo apunta a las fuentes individuales. Los iconos aparecen dentro de Case Studies solo cuando coinciden con una tecnología declarada; el resto permanece disponible en el catálogo y no se agrega a la Home.
 
 Los Case Studies presentan cinco secciones y reservan las tres capturas reales de cada proyecto para una galería interactiva. La ampliación usa un `<dialog>` nativo, controles con foco visible y cierre por Escape. La captura de mantenimiento `Captura de pantalla 2026-09-17 214602.png` (chatbot) es la primera de su galería.
 

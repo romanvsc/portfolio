@@ -237,11 +237,13 @@
   .case-fact { display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
   .case-fact .meta, .case-scope-label { color: var(--project); }
   .case-fact strong { font-size: .85rem; line-height: 1.35; overflow-wrap: anywhere; }
-  .case-flow { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: .75rem; }
-  .case-flow-block { display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; min-width: 0; min-height: 13rem; padding: 1.25rem; border: 3px solid var(--color-ink); background: var(--color-surface); box-shadow: 7px 7px 0 var(--color-shadow-hard); }
+  .case-chapter--problem { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .case-chapter--problem .case-chapter-heading { flex-direction: row; align-items: end; min-height: 0; }
+  .case-flow { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: clamp(.4rem, 1vw, .85rem); }
+  .case-flow-block { display: flex; flex-direction: column; justify-content: flex-start; gap: 1.5rem; min-width: 0; min-height: 13rem; padding: clamp(1rem, 1.5vw, 1.35rem); border: 3px solid var(--color-ink); background: var(--color-surface); box-shadow: 7px 7px 0 var(--color-shadow-hard); }
   .case-flow-block .meta { color: var(--project); }
-  .case-flow-block strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 3rem); font-weight: 400; line-height: .95; overflow-wrap: anywhere; }
-  .case-flow-arrow { display: grid; place-items: center; color: var(--project); font-size: 2rem; }
+  .case-flow-block p { max-width: none; color: var(--color-ink); font-size: clamp(1rem, 1.15vw, 1.25rem); line-height: 1.4; overflow-wrap: anywhere; }
+  .case-flow-arrow { display: grid; place-items: center; color: var(--project); font-size: clamp(1.25rem, 1.7vw, 1.75rem); }
   .case-process { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
   .case-process li { display: flex; flex-direction: column; gap: 1.25rem; min-height: 14rem; padding: 1.2rem; background: var(--project-soft); border-top: 4px solid var(--project); }
   .case-process-number { color: var(--project); font-family: var(--font-mono); font-size: 1.8rem; }
@@ -484,6 +486,8 @@
     .case-nav-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem .5rem; }
     .case-nav a { min-width: 0; padding-inline: .15rem; overflow-wrap: anywhere; }
     .case-chapter { grid-template-columns: 1fr; gap: 1.75rem; padding-block: 3.5rem; scroll-margin-top: 1rem; }
+    .case-chapter--problem .case-chapter-heading { flex-direction: column; align-items: start; }
+    .case-chapter--problem .case-chapter-mark { display: none; }
     .case-chapter-heading { min-height: 0; gap: 1rem; }
     .case-chapter h2 { font-size: clamp(2.2rem, 12vw, 4.5rem); }
     .case-chapter h2 > span { display: inline; margin-right: .75rem; }

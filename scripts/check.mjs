@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 import { projects, profile } from '../src/data.js';
 import { home } from '../src/sections/home.js';
 import { caseStudy, chapterTitles } from '../src/sections/case-study.js';
@@ -80,7 +82,7 @@ for (const icon of manifest.headerIcons) {
   verify(icon.bytes < 50000, `${icon.id}: header icon bounded`);
 }
 verify(Array.isArray(manifest.technologyIcons) && manifest.technologyIcons.length === 10, 'Ten technology source marks registered');
-verify(manifest.technologyIcons.map((item) => item.id).join(',') === 'vue,php,source-03,javascript,python,source-06,supabase,docker,laravel,source-10', 'Technology marks retain their source-sheet order');
+verify(manifest.technologyIcons.map((item) => item.id).join(',') === 'codeigniter,css,docker,javascript,mysql,php,python,supabase,tailwind,vue', 'Technology icons use individually named sources');
 for (const icon of manifest.technologyIcons) {
   const svg = await read(`public${icon.path}`);
   verify(svg.includes('<path') && !svg.includes('<image'), `${icon.id}: technology icon is vector-only`);
@@ -88,6 +90,9 @@ for (const icon of manifest.technologyIcons) {
   verify(!/<rect\b|<script|onload=|https?:\/\/(?!www.w3.org)/i.test(svg), `${icon.id}: transparent technology SVG has no background or executable content`);
   verify(svg.includes('fill="var(--technology-icon-'), `${icon.id}: technology illustration palette is internal`);
   verify(icon.bytes < 100000, `${icon.id}: technology SVG bounded`);
+  verify(icon.source === `/brand/project-icons/tech_icons_separated_clean/${icon.id}.png` && icon.technology, `${icon.id}: named individual PNG source is documented`);
+  const sourceMetadata = await sharp(fileURLToPath(new URL(`public${icon.source}`, root))).metadata();
+  verify(sourceMetadata.format === 'png' && sourceMetadata.hasAlpha === true, `${icon.id}: source PNG retains alpha transparency`);
 }
 verify((await read('public/brand/roman.svg')).includes('data:image/webp;base64,'), 'Portrait wrapper clearly remains raster');
 const glb = await readFile(new URL('public/models/portfolio-studio.glb', root));
@@ -122,7 +127,7 @@ for (const project of projects) {
   verify(project.media.gallery.length === 3 && new Set(project.media.gallery.map(({ src }) => src)).size === 3 && project.media.icon.endsWith('.svg'), `${project.id}: three unique selected captures and project icon`);
   const content = caseStudyContent(project);
   verify(content.technologies.length === project.stack.length, `${project.id}: every stack technology has a role description`);
-  const technologyAliases = { Vue: 'Vue.js', 'Vue 3': 'Vue.js', 'Vue.js': 'Vue.js', PHP: 'PHP', Docker: 'Docker', Supabase: 'Supabase' };
+  const technologyAliases = { Vue: 'Vue.js', 'Vue 3': 'Vue.js', 'Vue.js': 'Vue.js', PHP: 'PHP', Docker: 'Docker', Supabase: 'Supabase', MySQL: 'MySQL', 'MySQL / MariaDB': 'MySQL', 'CodeIgniter 4': 'CodeIgniter' };
   for (const item of content.technologies) {
     verify(!item.icon || manifest.technologyIcons.some((icon) => icon.id === item.icon && icon.technology === technologyAliases[item.name]), `${project.id}: technology icon is confidently associated with ${item.name}`);
     if (item.icon) verify(html.includes(`/brand/technology-icons/${item.icon}.svg`), `${project.id}: mapped technology icon appears on its case page`);
@@ -131,10 +136,17 @@ for (const project of projects) {
 }
 const maintenanceCase = caseStudy(projects.find((project) => project.id === 'mantenimiento'));
 verify(maintenanceCase.indexOf('Chatbot Asistente IA') < maintenanceCase.indexOf('Dashboard de Mantenimiento'), 'Mantenimiento chatbot is the first gallery capture');
+const registroTechnologies = caseStudyContent(projects.find((project) => project.id === 'registro')).technologies;
+verify(registroTechnologies.some(({ name, icon }) => name === 'MySQL' && icon === 'mysql'), 'Registro associates the named MySQL icon');
+const maintenanceTechnologies = caseStudyContent(projects.find((project) => project.id === 'mantenimiento')).technologies;
+verify(maintenanceTechnologies.some(({ name, icon }) => name === 'CodeIgniter 4' && icon === 'codeigniter') && maintenanceTechnologies.some(({ name, icon }) => name === 'MySQL / MariaDB' && icon === 'mysql'), 'Mantenimiento associates CodeIgniter and MySQL icons');
 const maintenanceFeatures = caseStudyContent(projects.find((project) => project.id === 'mantenimiento')).features;
 verify(maintenanceFeatures.some(({ status }) => status === 'in-progress') && maintenanceCase.includes('EN DESARROLLO'), 'Maintenance features in progress are explicitly labelled');
 const caseStyles = await read('src/style.css');
 verify(caseStyles.includes('.case-flow-block {') && caseStyles.includes('overflow-wrap: anywhere'), 'Case problem flow wraps safely without desktop overflow');
+verify(caseStyles.includes('.case-chapter--problem { grid-template-columns: minmax(0, 1fr);') && caseStyles.includes('.case-flow-block p { max-width: none;'), 'Case problem flow uses full width and readable body copy');
+const caseChapterSource = await read('src/sections/case-study/chapter.js');
+verify(caseChapterSource.includes('aria-hidden="true">→</span>') && caseChapterSource.includes('<p>${text}</p>'), 'Case problem flow uses directional arrows and paragraph semantics');
 verify(caseStyles.includes('.case-nav { position: sticky;') && caseStyles.includes('grid-template-columns: repeat(3, minmax(0, 1fr))'), 'Case navigation has desktop sticky and mobile layouts');
 verify(caseStyles.includes('.case-architecture-support {') && caseStyles.includes('.case-gallery-dialog {'), 'Case architecture and accessible gallery dialog are styled');
 verify(caseStyles.includes('.case-gallery-thumb:focus-visible') && caseStyles.includes('.case-gallery-step:disabled'), 'Gallery keyboard focus and endpoint states are visible');
