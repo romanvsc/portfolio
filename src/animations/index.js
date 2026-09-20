@@ -6,6 +6,19 @@ import { projects } from '../data.js';
 gsap.registerPlugin(ScrollTrigger);
 
 let activeStoryNavigation = null;
+const storyLabels = ['Inicio', 'Proyectos', 'Tecnologías', 'Sobre mí', 'Contacto'];
+const storyIds = ['inicio', 'proyectos', 'tecnologias', 'sobre-mi', 'contacto'];
+
+function syncSceneNavigation(chapterId, currentLabel) {
+  const index = storyIds.indexOf(chapterId);
+  if (index < 0) return;
+  document.querySelectorAll('[data-progress-link]').forEach((link) => {
+    if (link.dataset.progressLink === chapterId) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+  const current = document.querySelector('[data-scene-current]');
+  if (current) current.textContent = currentLabel || `0${index + 1} / 05 · ${storyLabels[index].toLocaleUpperCase('es')}`;
+}
 
 export function navigateToStoryAnchor(id, options = {}) {
   return activeStoryNavigation?.(id, options) ?? false;
@@ -20,10 +33,7 @@ function initChapterProgress() {
     if (!visible.length) return;
     const reference = window.innerHeight * .38;
     const current = visible.sort((a, b) => Math.abs(a.boundingClientRect.top - reference) - Math.abs(b.boundingClientRect.top - reference))[0];
-    links.forEach((link) => {
-      if (link.dataset.progressLink === current.target.id) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
-    });
+    syncSceneNavigation(current.target.id);
   }, { rootMargin: '-34% 0px -56% 0px', threshold: 0 });
   chapters.forEach((chapter) => observer.observe(chapter));
   return () => observer.disconnect();
@@ -71,15 +81,16 @@ function focusElementFor(state) {
   return marker.querySelector('.art-stage') || marker;
 }
 
-function enterSharedStory(stage, signal) {
+function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
   const scenes = [...stage.querySelectorAll(':scope > [data-story-scene]')];
   const projectScene = stage.querySelector('#proyectos');
   const projectSlides = [...stage.querySelectorAll('[data-story-project]')];
   const stackScene = stage.querySelector('#tecnologias');
   const stackMascot = stackScene?.querySelector('.stack-orbit-mascot');
   const techItems = [...(stackScene?.querySelectorAll('[data-tech-item]') || [])];
-  const progressLinks = [...document.querySelectorAll('[data-progress-link]')];
   const projectCounter = projectScene?.querySelector('[data-project-counter]');
+  const storySlider = document.querySelector('[data-story-slider]');
+  const storyScrubber = document.querySelector('[data-story-scrubber]');
   if (scenes.length !== 5 || projectSlides.length !== 4 || techItems.length !== 5 || !projectScene || !stackMascot) return () => {};
 
   const projectStates = projectSlides.map((panel, index) => ({
@@ -110,36 +121,63 @@ function enterSharedStory(stage, signal) {
   let pendingFocusHandler;
   let storyTrigger;
   let storyTimeline;
+  let activeStateIndex = -1;
+  let navigationTween;
   let stateTimes = [];
   const majorTransition = .75;
   const technologyTransition = .55;
   const storyDistance = 7 * majorTransition + 4 * technologyTransition;
+  const zoomSteps = sliderMode ? [1.08, 1.25, 1.55] : [1.3, 1.8, 2.8];
+  const incomingScale = sliderMode ? .88 : .65;
+
+  const labelForState = (state, stateIndex) => {
+    const chapterIndex = storyIds.indexOf(state.chapter);
+    const chapterLabel = storyLabels[chapterIndex];
+    const project = state.panel && projects.find((item) => item.id === state.panel.dataset.storyProject);
+    const technology = state.technology?.querySelector('h3')?.textContent.trim();
+    const detail = project?.title || technology;
+    const currentLabel = `0${chapterIndex + 1} / 05 · ${chapterLabel.toLocaleUpperCase('es')}${detail ? ` / ${detail.toLocaleUpperCase('es')}` : ''}`;
+    const valueLabel = detail ? `Escena ${chapterIndex + 1} de 5, ${chapterLabel}: ${detail}` : `Escena ${chapterIndex + 1} de 5: ${chapterLabel}`;
+    return { currentLabel, valueLabel, chapterIndex };
+  };
 
   const updateState = (stateIndex) => {
     const state = states[Math.max(0, Math.min(states.length - 1, stateIndex))];
-    scenes.forEach((scene) => setAvailable(scene, scene === state.root));
-    projectSlides.forEach((panel) => setAvailable(panel, state.root === projectScene && panel === state.panel));
-    techItems.forEach((item, index) => {
-      const revealed = state.techIndex !== undefined && index <= state.techIndex;
-      const active = state.techIndex === index;
-      const compact = state.techIndex !== undefined && index < state.techIndex;
-      item.classList.toggle('is-revealed', revealed);
-      item.classList.toggle('is-active', active);
-      item.classList.toggle('is-compact', compact);
-      item.setAttribute('aria-hidden', String(!revealed));
-      item.inert = !revealed;
-      const description = item.querySelector('p');
-      if (description) description.setAttribute('aria-hidden', String(compact));
-    });
-    progressLinks.forEach((link) => {
-      if (link.dataset.progressLink === state.chapter) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
-    });
-    if (projectCounter && state.projectNumber) projectCounter.textContent = state.projectNumber;
-    stage.dataset.storyCurrent = state.label;
+    const changed = activeStateIndex !== stateIndex;
+    if (changed) {
+      activeStateIndex = stateIndex;
+      scenes.forEach((scene) => setAvailable(scene, scene === state.root));
+      projectSlides.forEach((panel) => setAvailable(panel, state.root === projectScene && panel === state.panel));
+      techItems.forEach((item, index) => {
+        const revealed = state.techIndex !== undefined && index <= state.techIndex;
+        const active = state.techIndex === index;
+        const compact = state.techIndex !== undefined && index < state.techIndex;
+        item.classList.toggle('is-revealed', revealed);
+        item.classList.toggle('is-active', active);
+        item.classList.toggle('is-compact', compact);
+        item.setAttribute('aria-hidden', String(!revealed));
+        item.inert = !revealed;
+        const description = item.querySelector('p');
+        if (description) description.setAttribute('aria-hidden', String(compact));
+      });
+      if (projectCounter && state.projectNumber) projectCounter.textContent = state.projectNumber;
+      stage.dataset.storyCurrent = state.label;
+      const { currentLabel, valueLabel } = labelForState(state, stateIndex);
+      syncSceneNavigation(state.chapter, currentLabel);
+      if (storySlider) storySlider.setAttribute('aria-valuetext', valueLabel);
+    }
+    if (storySlider && storyTimeline) {
+      const progress = storyTimeline.progress();
+      const value = String(Math.round(progress * Number(storySlider.max)));
+      if (storySlider.value !== value) storySlider.value = value;
+      storySlider.style.setProperty('--story-progress', `${progress * 100}%`);
+    }
   };
 
   stage.classList.add('story-stage--depth');
+  stage.classList.toggle('story-stage--slider', sliderMode);
+  if (storySlider) storySlider.disabled = !sliderMode;
+  storyScrubber?.setAttribute('data-story-scrubber-mode', sliderMode ? 'slider' : 'scroll');
 
   scenes.forEach((scene) => gsap.set(scene, {
     autoAlpha: 0,
@@ -182,13 +220,13 @@ function enterSharedStory(stage, signal) {
     storyTimeline.set(toLayer, { zIndex: 2 }, start);
     storyTimeline.fromTo(fromLayer,
       { scale: 1, autoAlpha: 1, transformOrigin: originFrom, clipPath: 'inset(0% 0% 0% 0%)' },
-      { scale: 1.3, duration: duration * .2, ease: 'none', transformOrigin: originFrom, immediateRender: false },
+      { scale: zoomSteps[0], duration: duration * .2, ease: 'none', transformOrigin: originFrom, immediateRender: false },
       start,
     );
-    storyTimeline.to(fromLayer, { scale: 1.8, duration: duration * .25, ease: 'none', transformOrigin: originFrom }, start + duration * .2);
-    storyTimeline.to(fromLayer, { scale: 2.8, autoAlpha: 0, duration: duration * .55, ease: 'none', transformOrigin: originFrom }, start + duration * .45);
+    storyTimeline.to(fromLayer, { scale: zoomSteps[1], duration: duration * .25, ease: 'none', transformOrigin: originFrom }, start + duration * .2);
+    storyTimeline.to(fromLayer, { scale: zoomSteps[2], autoAlpha: 0, duration: duration * .55, ease: 'none', transformOrigin: originFrom }, start + duration * .45);
     storyTimeline.fromTo(toLayer,
-      { scale: .65, autoAlpha: 0, clipPath: mask, transformOrigin: originTo },
+      { scale: incomingScale, autoAlpha: 0, clipPath: mask, transformOrigin: originTo },
       { scale: 1, autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)', duration, ease: 'none', immediateRender: false, transformOrigin: originTo },
       start,
     );
@@ -224,21 +262,33 @@ function enterSharedStory(stage, signal) {
     return index;
   };
 
-  storyTrigger = ScrollTrigger.create({
-    trigger: stage,
-    animation: storyTimeline,
-    start: 'top top',
-    end: () => `+=${window.innerHeight * storyDistance}`,
-    pin: true,
-    pinSpacing: true,
-    scrub: .55,
-    anticipatePin: 1,
-    invalidateOnRefresh: true,
-    onUpdate: (self) => updateState(stateAtProgress(self.progress)),
-    onRefresh: (self) => updateState(stateAtProgress(self.progress)),
-    onLeave: () => updateState(states.length - 1),
-    onLeaveBack: () => updateState(0),
-  });
+  const syncTimelineState = () => updateState(stateAtProgress(storyTimeline.progress()));
+  storyTimeline.eventCallback('onUpdate', syncTimelineState);
+
+  if (sliderMode) {
+    storySlider?.addEventListener('input', () => {
+      navigationTween?.kill();
+      navigationTween = null;
+      storyTimeline.pause().progress(Number(storySlider.value) / Number(storySlider.max));
+      syncTimelineState();
+    }, { signal });
+  } else {
+    storyTrigger = ScrollTrigger.create({
+      trigger: stage,
+      animation: storyTimeline,
+      start: 'top top',
+      end: () => `+=${window.innerHeight * storyDistance}`,
+      pin: true,
+      pinSpacing: true,
+      scrub: .55,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: syncTimelineState,
+      onRefresh: syncTimelineState,
+      onLeave: () => updateState(states.length - 1),
+      onLeaveBack: () => updateState(0),
+    });
+  }
 
   const stateByAnchor = (id) => {
     const index = chapterIndices[id];
@@ -248,26 +298,66 @@ function enterSharedStory(stage, signal) {
 
   const navigate = (id, { behavior = 'smooth', focus = true, updateHash = true } = {}) => {
     const state = stateByAnchor(id);
-    if (!state || !storyTrigger) return false;
-    const targetScroll = storyTrigger.labelToScroll(`state-${state.label}`);
-    if (!Number.isFinite(targetScroll)) return false;
+    if (!state) return false;
     if (updateHash && location.hash !== `#${id}`) history.pushState(null, '', `${location.pathname}${location.search}#${id}`);
 
-    const focusAfterScroll = () => {
+    const focusAfterNavigation = () => {
       if (!focus) return;
       const focusTarget = id === 'contenido' ? document.getElementById('contenido') : state.root;
       focusTarget?.focus({ preventScroll: true });
     };
+
+    const restoreSliderViewport = () => {
+      if (!sliderMode) return;
+      const reset = () => {
+        if (!stage.isConnected) return;
+        stage.scrollTop = 0;
+        if (window.scrollY) window.scrollTo({ top: 0, behavior: 'instant' });
+      };
+      reset();
+      requestAnimationFrame(() => requestAnimationFrame(reset));
+    };
+
+    if (sliderMode) {
+      const targetIndex = chapterIndices[id];
+      navigationTween?.kill();
+      if (behavior === 'smooth') {
+        navigationTween = storyTimeline.tweenTo(stateTimes[targetIndex], {
+          duration: .8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            navigationTween = null;
+            restoreSliderViewport();
+            focusAfterNavigation();
+          },
+        });
+      } else {
+        storyTimeline.pause().time(stateTimes[targetIndex]);
+        syncTimelineState();
+        restoreSliderViewport();
+        focusAfterNavigation();
+      }
+      return true;
+    }
+
+    if (!storyTrigger) return false;
+    const targetIndex = chapterIndices[id];
+    const labelledScroll = storyTrigger.labelToScroll(`state-${state.label}`);
+    const mappedScroll = storyTrigger.start + (stateTimes[targetIndex] / storyTimeline.duration()) * (storyTrigger.end - storyTrigger.start);
+    const targetScroll = Number.isFinite(labelledScroll) && (targetIndex === 0 || labelledScroll > storyTrigger.start + 1)
+      ? labelledScroll
+      : mappedScroll;
+    if (!Number.isFinite(targetScroll)) return false;
     window.clearTimeout(pendingFocusTimer);
     window.removeEventListener('scrollend', pendingFocusHandler);
     pendingFocusHandler = undefined;
-    if (Math.abs(window.scrollY - targetScroll) < 2) focusAfterScroll();
+    if (Math.abs(window.scrollY - targetScroll) < 2) focusAfterNavigation();
     else if (focus) {
       const finishFocus = () => {
         window.clearTimeout(pendingFocusTimer);
         window.removeEventListener('scrollend', finishFocus);
         pendingFocusHandler = undefined;
-        focusAfterScroll();
+        focusAfterNavigation();
       };
       pendingFocusHandler = finishFocus;
       window.addEventListener('scrollend', finishFocus, { once: true, signal });
@@ -278,30 +368,36 @@ function enterSharedStory(stage, signal) {
   };
 
   activeStoryNavigation = navigate;
-  document.addEventListener('click', (event) => {
+  const handleSceneLink = (event) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const link = event.target.closest('a[href]');
-    if (!link || !link.closest('.site-header, .story-menu, .scroll-link, .skip-link, .site-footer')) return;
+    const link = event.currentTarget;
     const url = new URL(link.href, location.href);
     if (url.origin !== location.origin || url.pathname !== location.pathname || !url.hash) return;
     const id = decodeURIComponent(url.hash.slice(1));
     if (!stateByAnchor(id)) return;
     event.preventDefault();
     navigate(id);
-  }, { signal });
-  window.addEventListener('portfolio:story-menu-change', () => {
-    requestAnimationFrame(() => ScrollTrigger.refresh());
-  }, { signal });
+  };
+  document.querySelectorAll('.site-header a[href], .story-menu a[href], .scroll-link[href], .skip-link[href], .site-footer a[href]')
+    .forEach((link) => link.addEventListener('click', handleSceneLink, { signal }));
   window.addEventListener('popstate', () => {
     const id = location.hash.slice(1);
     if (stateByAnchor(id)) navigate(id, { behavior: 'auto', focus: false, updateHash: false });
   }, { signal });
 
-  updateState(0);
-  ScrollTrigger.refresh();
+  const initialAnchor = decodeURIComponent(location.hash.slice(1));
+  const initialStateIndex = sliderMode ? (chapterIndices[initialAnchor] ?? 0) : 0;
+  if (sliderMode && initialStateIndex > 0) storyTimeline.pause().time(stateTimes[initialStateIndex]);
+  updateState(initialStateIndex);
+  if (sliderMode && initialAnchor) requestAnimationFrame(() => {
+    stage.scrollTop = 0;
+    if (window.scrollY) window.scrollTo({ top: 0, behavior: 'instant' });
+  });
+  if (!sliderMode) ScrollTrigger.refresh();
   return () => {
     window.clearTimeout(pendingFocusTimer);
     window.removeEventListener('scrollend', pendingFocusHandler);
+    navigationTween?.kill();
     if (activeStoryNavigation === navigate) activeStoryNavigation = null;
     scenes.forEach((scene) => setAvailable(scene, true));
     projectSlides.forEach((panel) => setAvailable(panel, true));
@@ -311,10 +407,18 @@ function enterSharedStory(stage, signal) {
       item.inert = false;
       item.querySelector('p')?.removeAttribute('aria-hidden');
     });
-    progressLinks.forEach((link) => link.removeAttribute('aria-current'));
+    document.querySelectorAll('[data-progress-link]').forEach((link) => link.removeAttribute('aria-current'));
+    if (storySlider) {
+      storySlider.disabled = true;
+      storySlider.value = '0';
+      storySlider.style.removeProperty('--story-progress');
+      storySlider.setAttribute('aria-valuetext', 'Escena 1 de 5: Inicio');
+    }
+    storyScrubber?.removeAttribute('data-story-scrubber-mode');
     stage.classList.remove('story-stage--depth');
+    stage.classList.remove('story-stage--slider');
     stage.removeAttribute('data-story-current');
-    ScrollTrigger.refresh();
+    if (!sliderMode) ScrollTrigger.refresh();
   };
 }
 
@@ -365,20 +469,24 @@ export function initMotion() {
   media.add({
     motion: '(prefers-reduced-motion: no-preference)',
     story: '(min-width: 1280px) and (min-height: 800px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
+    mobileScrub: '(max-width: 820px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)',
     fine: '(hover: hover) and (pointer: fine)',
   }, ({ conditions }) => {
     const cleanup = new AbortController();
     const { signal } = cleanup;
     const stage = document.querySelector('[data-story-stage]');
-    const useStoryStage = Boolean(stage && conditions.story);
+    const storyMode = conditions.story ? 'scroll' : conditions.mobileScrub ? 'slider' : null;
+    const useStoryStage = Boolean(stage && storyMode);
     const progressCleanup = useStoryStage ? () => {} : initChapterProgress();
     let storyCleanup = () => {};
 
     if (conditions.motion) {
       if (useStoryStage) {
         initHeroEntrance();
-        storyCleanup = enterSharedStory(stage, signal);
-      } else initHomeFlowMotion(conditions, signal);
+        storyCleanup = enterSharedStory(stage, signal, { sliderMode: storyMode === 'slider' });
+      } else {
+        initHomeFlowMotion(conditions, signal);
+      }
     }
 
     const casePage = document.querySelector('.case-page');

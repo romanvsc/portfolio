@@ -1,3 +1,5 @@
+import { navigateToStoryAnchor } from '../animations/index.js';
+
 export function initInteractions() {
   const controller = new AbortController();
   const { signal } = controller;
@@ -7,7 +9,6 @@ export function initInteractions() {
   const homePage = document.querySelector('.home-page');
   if (storyMenu && storyMenuToggle && storyMenuClose && homePage) {
     let returnFocus = null;
-    const announceMenuChange = (open) => window.dispatchEvent(new CustomEvent('portfolio:story-menu-change', { detail: { open } }));
     storyMenuToggle.addEventListener('click', () => {
       if (storyMenu.open) return;
       returnFocus = storyMenuToggle;
@@ -15,18 +16,21 @@ export function initInteractions() {
       storyMenuToggle.setAttribute('aria-expanded', 'true');
       homePage.setAttribute('data-story-menu-open', 'true');
       storyMenuClose.focus();
-      announceMenuChange(true);
     }, { signal });
     const closeStoryMenu = () => {
       if (storyMenu.open) storyMenu.close();
     };
     storyMenuClose.addEventListener('click', closeStoryMenu, { signal });
-    storyMenu.querySelectorAll('[data-story-nav-link]').forEach((link) => link.addEventListener('click', closeStoryMenu, { signal }));
+    storyMenu.querySelectorAll('[data-story-nav-link]').forEach((link) => link.addEventListener('click', (event) => {
+      const url = new URL(link.href, location.href);
+      const id = decodeURIComponent(url.hash.slice(1));
+      if (url.origin === location.origin && url.pathname === location.pathname && url.hash && navigateToStoryAnchor(id)) event.preventDefault();
+      closeStoryMenu();
+    }, { signal }));
     storyMenu.addEventListener('click', (event) => { if (event.target === storyMenu) closeStoryMenu(); }, { signal });
     storyMenu.addEventListener('close', () => {
       storyMenuToggle.setAttribute('aria-expanded', 'false');
       homePage.removeAttribute('data-story-menu-open');
-      announceMenuChange(false);
       returnFocus?.focus({ preventScroll: true });
       returnFocus = null;
     }, { signal });
