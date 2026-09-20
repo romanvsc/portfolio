@@ -1,6 +1,6 @@
 # Identidad y assets
 
-Originales conservados en la raíz. Los archivos de esta carpeta se generan con `npm run assets`.
+Originales conservados en la raíz. Los derivados vectoriales se generan con `npm run assets`; la textura de fondo es un recurso estático optimizado y registrado en el manifiesto.
 
 | Archivo | Tipo | Uso |
 | --- | --- | --- |
@@ -33,6 +33,7 @@ Originales conservados en la raíz. Los archivos de esta carpeta se generan con 
 | technology-icons/supabase.svg | Trazados vectoriales transparentes | Case Studies / Supabase |
 | technology-icons/tailwind.svg | Trazados vectoriales transparentes | Catálogo / Tailwind CSS |
 | technology-icons/vue.svg | Trazados vectoriales transparentes | Case Studies / Vue.js |
+| backgrounds/paper-grain.webp | Textura raster repetible en escala de grises | Fondo editorial global; tesela estática de 768×768 |
 | roman.webp | Fotografía optimizada | Retrato principal |
 | roman.svg | Contenedor SVG con WebP embebido | Compatibilidad; NO es un retrato vectorial |
 
@@ -45,6 +46,8 @@ Los cuatro iconos de proyecto provienen de `public/brand/capturas_apps/` y se ve
 Los cinco iconos del header provienen de `stack/Iconos-header.png`. El original se preserva; cada símbolo se recorta y vectoriza por separado sobre un canvas transparente, sin raster embebido ni rectángulo de fondo.
 
 Los diez iconos tecnológicos se generan desde PNG individuales en `project-icons/tech_icons_separated_clean/`. Los originales conservan su alfa y no se modifican. `npm run assets:technologies` verifica la transparencia, traza cada marca como SVG con `viewBox`, paleta interna y sin `<image>` raster. La hoja anterior `project-icons/tecnologias_icon.png` y los SVG derivados de ella se conservan; el manifiesto activo apunta a las fuentes individuales. Los iconos aparecen dentro de Case Studies solo cuando coinciden con una tecnología declarada; el resto permanece disponible en el catálogo y no se agrega a la Home.
+
+`backgrounds/paper-grain.webp` es una tesela estática de grano muy bajo, en escala de grises. Se superpone con baja opacidad mediante mezcla multiplicativa sobre el fondo semántico, junto a zonas tonales hechas con `canvas` y `canvas-tonal`; las superficies opacas mantienen limpio el retrato, las capturas y los bloques.
 
 Los Case Studies presentan cinco secciones y reservan las tres capturas reales de cada proyecto para una galería interactiva. La ampliación usa un `<dialog>` nativo, controles con foco visible y cierre por Escape. La captura de mantenimiento `Captura de pantalla 2026-09-17 214602.png` (chatbot) es la primera de su galería.
 

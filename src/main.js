@@ -8,7 +8,7 @@ import { header, footer } from './components/layout.js';
 import { home } from './sections/home.js';
 import { caseStudy } from './sections/case-study.js';
 import { initInteractions } from './components/interactions.js';
-import { initMotion } from './animations/index.js';
+import { initMotion, navigateToStoryAnchor } from './animations/index.js';
 
 const path = location.pathname.replace(/\/$/, '') || '/';
 const selected = projects.find((project) => path === `/proyectos/${project.id}`);
@@ -38,5 +38,9 @@ function pageHide(event) { if (!event.persisted) dispose(); }
 window.addEventListener('pagehide', pageHide);
 if (import.meta.hot) import.meta.hot.dispose(dispose);
 if (location.hash) document.fonts.ready.then(() => {
-  if (!disposed) document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
+  if (disposed) return;
+  const id = location.hash.slice(1);
+  if (!navigateToStoryAnchor(id, { behavior: 'auto', focus: false, updateHash: false })) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'instant' });
+  }
 });

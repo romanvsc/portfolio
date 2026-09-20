@@ -1,18 +1,37 @@
 export function initInteractions() {
   const controller = new AbortController();
   const { signal } = controller;
-  document.querySelector('.header-nav')?.addEventListener('click', (event) => {
-    const link = event.target.closest('a');
-    if (!link || location.pathname !== '/') return;
-    const destination = new URL(link.href);
-    const target = document.getElementById(destination.hash.slice(1));
-    if (!target) return;
-    event.preventDefault();
-    history.pushState(null, '', destination.hash);
-    target.tabIndex = -1;
-    target.focus({ preventScroll: true });
-    target.scrollIntoView({ behavior: 'instant', block: 'start' });
-  }, { signal });
+  const storyMenu = document.querySelector('[data-story-menu]');
+  const storyMenuToggle = document.querySelector('[data-story-menu-open]');
+  const storyMenuClose = document.querySelector('[data-story-menu-close]');
+  const homePage = document.querySelector('.home-page');
+  if (storyMenu && storyMenuToggle && storyMenuClose && homePage) {
+    let returnFocus = null;
+    const announceMenuChange = (open) => window.dispatchEvent(new CustomEvent('portfolio:story-menu-change', { detail: { open } }));
+    storyMenuToggle.addEventListener('click', () => {
+      if (storyMenu.open) return;
+      returnFocus = storyMenuToggle;
+      storyMenu.showModal();
+      storyMenuToggle.setAttribute('aria-expanded', 'true');
+      homePage.setAttribute('data-story-menu-open', 'true');
+      storyMenuClose.focus();
+      announceMenuChange(true);
+    }, { signal });
+    const closeStoryMenu = () => {
+      if (storyMenu.open) storyMenu.close();
+    };
+    storyMenuClose.addEventListener('click', closeStoryMenu, { signal });
+    storyMenu.querySelectorAll('[data-story-nav-link]').forEach((link) => link.addEventListener('click', closeStoryMenu, { signal }));
+    storyMenu.addEventListener('click', (event) => { if (event.target === storyMenu) closeStoryMenu(); }, { signal });
+    storyMenu.addEventListener('close', () => {
+      storyMenuToggle.setAttribute('aria-expanded', 'false');
+      homePage.removeAttribute('data-story-menu-open');
+      announceMenuChange(false);
+      returnFocus?.focus({ preventScroll: true });
+      returnFocus = null;
+    }, { signal });
+  }
+
   // One narrator at a time. Native details preserves keyboard and touch behavior.
   document.querySelectorAll('.dorito').forEach((item) => item.addEventListener('toggle', () => {
     if (item.open) document.querySelectorAll('.dorito').forEach((other) => { if (other !== item) other.open = false; });

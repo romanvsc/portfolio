@@ -2,6 +2,7 @@
 @theme static {
   --color-*: initial;
   --color-canvas: #f4f0e6;
+  --color-canvas-tonal: #efe9dc;
   --color-surface: #fffaf0;
   --color-surface-soft: #ebe5d8;
   --color-ink: #111111;

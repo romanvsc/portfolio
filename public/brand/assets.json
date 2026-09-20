@@ -170,6 +170,15 @@
       "sourceSheet": "1672x941"
     }
   ],
+  "backgrounds": [
+    {
+      "id": "paper-grain",
+      "path": "/brand/backgrounds/paper-grain.webp",
+      "type": "raster-texture",
+      "repeatable": true,
+      "dimensions": "768x768"
+    }
+  ],
   "portrait": {
     "webp": "/brand/roman.webp",
     "svg": "/brand/roman.svg",
