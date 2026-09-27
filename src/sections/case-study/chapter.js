@@ -19,9 +19,8 @@ function renderTechnologies(content) {
 }
 
 function renderAbout(content) {
-  const facts = content.facts.map(([label, value]) => `<div class="case-fact"><span class="meta">${label}</span><strong>${value}</strong></div>`).join('');
   const principles = content.principles.map(({ title, description }, index) => `<article class="case-principle"><span class="meta">0${index + 1} / EJE</span><h3>${title}</h3><p>${description}</p></article>`).join('');
-  return `<div class="case-about"><div class="case-about-intro"><p class="case-lead">${content.description}</p><div class="case-facts">${facts}</div></div><div class="case-about-architecture"><div class="case-subheading"><span class="meta">SISTEMA / ARQUITECTURA</span><p>${content.architecture}</p></div>${architectureMarkup(content)}<div class="case-principles"><h3 class="meta">EJES DOCUMENTADOS</h3>${principles}</div></div></div>`;
+  return `<div class="case-about"><p class="case-lead">${content.description}</p><div class="case-about-architecture"><div class="case-subheading"><span class="meta">SISTEMA / ARQUITECTURA</span><p>${content.architecture}</p></div>${architectureMarkup(content)}<div class="case-principles"><h3 class="meta">EJES DOCUMENTADOS</h3>${principles}</div></div></div>`;
 }
 
 function renderFeatures(content) {

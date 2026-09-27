@@ -102,11 +102,6 @@ export function caseStudyContent(project) {
     },
     about: {
       description: project.description,
-      facts: [
-        ['DOMINIO', project.domain],
-        ['ROL DECLARADO', project.role],
-        ['FOCO', project.focus],
-      ],
       architecture: project.architecture,
       layers: architectureByProject[project.id] ?? [],
       support: architectureSupportByProject[project.id] ?? [],

@@ -2,6 +2,7 @@ import { projects } from '../data.js';
 import { arrow } from '../components/layout.js';
 import { caseChapter } from './case-study/chapter.js';
 import { caseHero } from './case-study/hero.js';
+import { caseProof } from './case-study/proof.js';
 import { chapterTitles, caseNavigation } from './case-study/navigation.js';
 
 export { chapterTitles };
@@ -12,5 +13,5 @@ function nextProjectLink(project) {
 
 export function caseStudy(project) {
   const next = projects[(projects.indexOf(project) + 1) % projects.length];
-  return `<main id="contenido" tabindex="-1" class="case-page shell theme-${project.id}"><a class="text-link meta case-back" href="/#proyectos">← VOLVER A PROYECTOS</a>${caseHero(project)}${caseNavigation()}<div class="case-chapters">${chapterTitles.map((title, index) => caseChapter(project, title, index)).join('')}</div><p class="case-disclosure">Presentación basada en el alcance documentado del repositorio. ${project.fork ? 'Este repositorio es un fork; los créditos y el historial están disponibles en GitHub. ' : ''}La inclusión en este portfolio no implica autoría exclusiva ni certifica un despliegue en producción.</p>${nextProjectLink(next)}</main>`;
+  return `<main id="contenido" tabindex="-1" class="case-page shell theme-${project.id}"><a class="text-link meta case-back" href="/#proyectos">← VOLVER A PROYECTOS</a>${caseHero(project)}${caseProof(project)}${caseNavigation()}<div class="case-chapters">${chapterTitles.map((title, index) => caseChapter(project, title, index)).join('')}</div><p class="case-disclosure">Presentación basada en el alcance documentado del repositorio. ${project.fork ? 'Este repositorio es un fork; los créditos y el historial están disponibles en GitHub. ' : ''}La inclusión en este portfolio no implica autoría exclusiva ni certifica un despliegue en producción.</p>${nextProjectLink(next)}</main>`;
 }

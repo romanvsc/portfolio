@@ -1,7 +1,10 @@
 export const arrow = '<span aria-hidden="true">↗</span>';
 export const external = 'target="_blank" rel="noopener noreferrer"';
-export function header() {
-  return `<a class="skip-link" href="#contenido">Saltar al contenido</a><header class="site-header"><a class="wordmark" href="/#inicio" aria-label="Román Vogel, inicio">RV<span aria-hidden="true">.</span></a></header>`;
+export function header(showStoryMenu = false) {
+  const menuToggle = showStoryMenu
+    ? '<button class="story-menu-toggle meta" type="button" data-story-menu-open aria-haspopup="dialog" aria-controls="story-menu" aria-expanded="false" aria-label="Abrir navegación del portfolio"><span class="story-menu-glyph" aria-hidden="true"><i></i><i></i></span><span class="story-menu-toggle-label" aria-hidden="true">MENÚ</span></button>'
+    : '';
+  return `<a class="skip-link" href="#contenido">Saltar al contenido</a><header class="site-header"><div class="site-controls"><a class="wordmark" href="/#inicio" aria-label="Román Vogel, inicio">RV<span aria-hidden="true">.</span></a>${menuToggle}</div></header>`;
 }
 export function footer() {
   return `<footer class="shell site-footer meta"><span>© ${new Date().getFullYear()} ROMÁN VOGEL CORACH</span><span>SYSTEMS × DESIGN × CODE</span><a href="#contenido">VOLVER ARRIBA ↑</a></footer><div class="cursor-note meta" aria-hidden="true">VIEW ↗</div>`;

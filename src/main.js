@@ -22,7 +22,7 @@ else if (selected) {
   document.title = 'Página no encontrada — Román Vogel';
   content = '<main id="contenido" tabindex="-1" class="not-found shell"><p class="meta">404 / POR ACÁ NO ERA</p><h1>Esta página no existe.</h1><a href="/" class="text-link">Volver al inicio ↗</a></main>';
 }
-document.querySelector('#app').innerHTML = header() + content + footer();
+document.querySelector('#app').innerHTML = header(path === '/') + content + footer();
 let meta = document.querySelector('meta[name="theme-color"]');
 if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.append(meta); }
 meta.content = tokens.canvas;

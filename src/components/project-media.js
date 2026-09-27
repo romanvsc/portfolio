@@ -17,7 +17,7 @@ function screenshotFigure(image, index, loading = 'lazy', className = '') {
 }
 
 export function featuredScreenshot(project) {
-  const image = project.media.gallery[0];
+  const image = project.media.featuredCapture;
   if (!image) return '<p class="case-pending">CAPTURA REAL PENDIENTE</p>';
   return screenshotFigure(image, 0, 'eager', 'case-featured-capture');
 }
