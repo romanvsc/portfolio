@@ -455,8 +455,8 @@
   @media (min-width: 1700px) { .hero-editorial { min-height: 610px; } }
   @media (max-width: 1279px) {
     .site-header { position: absolute; }
-    .wordmark { position: absolute; top: .7rem; left: 1.25rem; }
-    .story-menu-toggle { left: .45rem; width: 3.1rem; min-height: 4.3rem; }
+    .wordmark { position: relative; top: auto; left: auto; }
+    .story-menu-toggle { left: auto; width: 44px; min-height: 44px; }
     .stack-orbit { grid-template-columns: minmax(11rem, .7fr) minmax(0, 1.3fr); gap: 2rem; }
     .technology-orbit { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
     .technology-orbit-item { grid-template-columns: 1fr; align-content: start; gap: .5rem; min-height: 10rem; }
@@ -616,7 +616,8 @@
     .case-back { margin-block: .75rem 1.5rem; }
     .case-hero { padding-bottom: 2rem; }
     .case-hero-copy { display: block; padding-block: 1rem 2rem; }
-    .case-hero h1 { max-width: 100%; margin-top: 1rem; font-size: clamp(2.8rem, 14.5vw, 5.5rem); line-height: .9; text-wrap: balance; }
+    .case-hero-copy > div { container-type: inline-size; }
+    .case-hero h1 { max-width: 100%; margin-top: 1rem; font-size: clamp(2.25rem, 14cqw, 5rem); line-height: .9; text-wrap: balance; }
     .case-hero-statement { margin-top: 1.5rem; font-size: 1.1rem; }
     .case-hero-visuals { display: block; }
     .case-identity-visual .art-stage { height: 280px; }
