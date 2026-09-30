@@ -564,7 +564,7 @@ export function initMotion() {
   media.add({
     motion: '(prefers-reduced-motion: no-preference)',
     story: '(min-width: 1280px) and (min-height: 800px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
-    mobileScrub: '(max-width: 820px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)',
+    mobileScrub: '(max-width: 820px) and (min-height: 600px) and (prefers-reduced-motion: no-preference)',
     fine: '(hover: hover) and (pointer: fine)',
   }, ({ conditions }) => {
     const cleanup = new AbortController();
