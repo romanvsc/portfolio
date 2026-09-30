@@ -525,7 +525,7 @@
     :root { --story-slider-space: calc(5rem + env(safe-area-inset-bottom, 0px)); }
     .home-page:has(.story-stage--slider) { min-height: 100svh; }
     .story-stage--slider { position: relative; height: 100svh; min-height: 100svh; overflow: clip; }
-    .story-scrubber[data-story-scrubber-mode="slider"] { position: fixed; z-index: 45; right: 0; bottom: 0; left: 0; padding: .35rem max(1rem, env(safe-area-inset-right, 0px)) calc(.35rem + env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px)); border-top: 2px solid var(--color-ink); background: var(--color-canvas); }
+    .story-scrubber[data-story-scrubber-mode="slider"] { position: fixed; z-index: 45; right: 0; bottom: 0; left: 0; display: grid; gap: .2rem; padding: .35rem max(1rem, env(safe-area-inset-right, 0px)) calc(.35rem + env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px)); border-top: 2px solid var(--color-ink); background: var(--color-canvas); }
     .story-scrubber-current { position: absolute; bottom: calc(100% + .2rem); left: clamp(.75rem, var(--story-progress, 0%), calc(100% - .75rem)); max-width: min(78vw, 18rem); overflow: hidden; padding: .22rem .38rem; color: var(--color-ink); background: var(--color-canvas); border-left: 2px solid var(--color-brand); font-size: .58rem; text-overflow: ellipsis; white-space: nowrap; transform: translateX(-50%); }
     .story-scrubber-control { position: relative; padding-top: .65rem; }
     .story-scrubber-markers { position: absolute; z-index: 1; inset: 0 0 auto; display: block; height: .45rem; margin: 0; padding: 0; list-style: none; pointer-events: none; }
