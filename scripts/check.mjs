@@ -11,6 +11,9 @@ import { sceneConfig } from '../src/scene-config.js';
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
 const tokens = JSON.parse(await read('src/tokens.json'));
+const lightTokens = Object.fromEntries(Object.entries(tokens).filter(([, value]) => typeof value === 'string'));
+const darkTokens = tokens.dark;
+const indexHtml = await read('index.html');
 let checks = 0;
 const verify = (condition, message) => { assert.ok(condition, message); checks++; };
 verify(projects.length === 4 && new Set(projects.map((p) => p.id)).size === 4, 'Four unique project routes');
@@ -41,7 +44,15 @@ const portraitRule = css.match(/\.hero-portrait \{([^}]*)\}/)?.[1] || '';
 verify(!portraitRule.includes('border:') && !portraitRule.includes('box-shadow:'), 'Portrait rectangular frame removed');
 for (const [, token] of css.matchAll(/var\(--color-([a-z-]+)\)/g)) verify(token in tokens, `Token exists: ${token}`);
 const theme = await read('src/theme.css');
-for (const [name, value] of Object.entries(tokens)) verify(theme.includes(`--color-${name}: ${value};`), `Theme synchronized: ${name}`);
+for (const [name, value] of Object.entries(lightTokens)) verify(theme.includes(`--color-${name}: ${value};`), `Light theme synchronized: ${name}`);
+verify(darkTokens && Object.keys(darkTokens).every((name) => typeof lightTokens[name] === 'string') && Object.keys(lightTokens).filter((name) => !name.startsWith('scene-')).every((name) => typeof darkTokens[name] === 'string'), 'Dark theme covers every UI token and only overrides existing semantic token names');
+for (const [name, value] of Object.entries(darkTokens || {})) verify(theme.includes(`--color-${name}: ${value};`), `Dark theme synchronized: ${name}`);
+verify(theme.includes(':root[data-theme="dark"]') && theme.includes('color-scheme: dark;'), 'Generated Tailwind tokens scope dark values and native color scheme to the dark theme');
+const themeSource = await read('src/components/theme.js');
+verify(indexHtml.includes("localStorage.getItem('romanvsc-portfolio-color-mode')") && indexHtml.includes("dataset.theme = theme") && indexHtml.indexOf('localStorage.getItem') < indexHtml.indexOf('<script type="module"'), 'Stored theme is applied before module styles to prevent an initial flash');
+verify(header(false).includes('data-theme-toggle') && themeSource.includes("setItem(STORAGE_KEY, theme)") && themeSource.includes("setAttribute('aria-pressed'"), 'Theme toggle exposes pressed state and persists explicit user preference');
+verify(css.includes('.theme-toggle {') && css.includes('flex: 0 0 44px; width: 44px;') && css.includes('.theme-toggle-icon--moon'), 'Theme toggle has a visible icon and a 44px control target');
+verify(css.includes(':root[data-theme-transitioning] #app *') && css.includes('background-color .32s') && themeSource.includes("matchMedia('(prefers-reduced-motion: reduce)'") && css.includes('transition: none !important'), 'Theme switch crossfades semantic UI colors and respects reduced motion');
 const manifest = JSON.parse(await read('public/brand/assets.json'));
 verify(manifest.backgrounds?.some((item) => item.id === 'paper-grain' && item.path === '/brand/backgrounds/paper-grain.webp' && item.repeatable && item.dimensions === '768x768'), 'Repeatable paper-grain background is registered');
 const paperGrain = await sharp(fileURLToPath(new URL('public/brand/backgrounds/paper-grain.webp', root))).metadata();
@@ -294,12 +305,19 @@ function luminance(hex) {
   const channels = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((n) => n <= .04045 ? n / 12.92 : ((n + .055) / 1.055) ** 2.4);
   return channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722;
 }
-const contrastPairs = [['ink', 'canvas'], ['muted', 'canvas'], ['on-brand', 'brand'], ['accent-ink', 'accent'], ['muted', 'surface'], ['focus', 'canvas'], ['maintenance-signal', 'canvas'], ['brand-text', 'canvas'], ['brand-text', 'surface'], ['brand-text', 'surface-soft']];
-for (const project of projects) contrastPairs.push([project.theme, `${project.theme}-soft`], ['ink', `${project.theme}-soft`], ['muted', `${project.theme}-soft`], ['brand-text', `${project.theme}-soft`]);
-for (const [foreground, background] of contrastPairs) {
-  const values = [luminance(tokens[foreground]), luminance(tokens[background])].sort((a, b) => b - a);
-  const contrast = (values[0] + .05) / (values[1] + .05);
-  verify(contrast >= 4.5, `Contrast ${foreground}/${background}: ${contrast.toFixed(2)}`);
-  console.log(`Contrast ${foreground}/${background}: ${contrast.toFixed(2)}:1`);
+const contrastPairs = [['ink', 'canvas'], ['muted', 'canvas'], ['on-brand', 'brand'], ['on-brand', 'brand-hover'], ['accent-ink', 'accent'], ['muted', 'surface'], ['focus', 'canvas'], ['maintenance-signal', 'canvas'], ['brand-text', 'canvas'], ['brand-text', 'surface'], ['brand-text', 'surface-soft']];
+for (const project of projects) contrastPairs.push([project.theme, `${project.theme}-soft`], [project.theme, 'canvas'], ['ink', `${project.theme}-soft`], ['muted', `${project.theme}-soft`], ['brand-text', `${project.theme}-soft`]);
+for (const [mode, palette] of [['light', lightTokens], ['dark', darkTokens]]) {
+  verify(Boolean(palette), `${mode} palette is available`);
+  for (const [foreground, background] of contrastPairs) {
+    if (!palette || typeof palette[foreground] !== 'string' || typeof palette[background] !== 'string') {
+      verify(false, `${mode} contrast tokens exist: ${foreground}/${background}`);
+      continue;
+    }
+    const values = [luminance(palette[foreground]), luminance(palette[background])].sort((a, b) => b - a);
+    const contrast = (values[0] + .05) / (values[1] + .05);
+    verify(contrast >= 4.5, `${mode} contrast ${foreground}/${background}: ${contrast.toFixed(2)}`);
+    console.log(`${mode} contrast ${foreground}/${background}: ${contrast.toFixed(2)}:1`);
+  }
 }
 console.log(`${checks} assertions passed: tokens, assets, project data, contacts, GLB and compiled CSS.`);

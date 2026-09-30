@@ -1,9 +1,10 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import tokens from '../tokens.json';
 import { projects } from '../data.js';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const currentThemeColor = (token) => () => getComputedStyle(document.documentElement).getPropertyValue(`--color-${token}`).trim();
 
 let activeStoryNavigation = null;
 const storyLabels = ['Inicio', 'Proyectos', 'Tecnologías', 'Sobre mí', 'Contacto'];
@@ -526,13 +527,13 @@ function initHomeFlowMotion(conditions, signal) {
   document.querySelectorAll('.project-section').forEach((section) => {
     const project = projects.find((item) => item.id === section.dataset.project);
     const counter = document.querySelector('[data-project-counter]');
-    gsap.timeline({ scrollTrigger: { trigger: section, start: 'top 85%', end: 'bottom 15%', scrub: .5,
+    gsap.timeline({ scrollTrigger: { trigger: section, start: 'top 85%', end: 'bottom 15%', scrub: .5, invalidateOnRefresh: true,
       onEnter: () => { if (counter) counter.textContent = project.number; },
       onEnterBack: () => { if (counter) counter.textContent = project.number; },
     } })
-      .fromTo(section, { backgroundColor: tokens.canvas, '--active-accent': tokens.muted }, { backgroundColor: tokens[`${project.theme}-soft`], '--active-accent': tokens[project.theme], duration: .2, ease: 'none' })
-      .to(section, { backgroundColor: tokens[`${project.theme}-soft`], duration: .6 })
-      .to(section, { backgroundColor: tokens.canvas, '--active-accent': tokens.muted, duration: .2, ease: 'none' });
+      .fromTo(section, { backgroundColor: currentThemeColor('canvas'), '--active-accent': currentThemeColor('muted') }, { backgroundColor: currentThemeColor(`${project.theme}-soft`), '--active-accent': currentThemeColor(project.theme), duration: .2, ease: 'none' })
+      .to(section, { backgroundColor: currentThemeColor(`${project.theme}-soft`), duration: .6 })
+      .to(section, { backgroundColor: currentThemeColor('canvas'), '--active-accent': currentThemeColor('muted'), duration: .2, ease: 'none' });
     ScrollTrigger.create({ trigger: section, start: 'top 82%', end: 'bottom 18%', toggleClass: { targets: '.work-count', className: 'is-tracking' } });
     if (conditions.fine) {
       const art = section.querySelector('.art-stage');
@@ -558,6 +559,8 @@ function initHomeFlowMotion(conditions, signal) {
 
 export function initMotion() {
   const media = gsap.matchMedia();
+  const themeRefreshController = new AbortController();
+  document.addEventListener('portfolio:themechange', () => ScrollTrigger.refresh(), { signal: themeRefreshController.signal });
   media.add({
     motion: '(prefers-reduced-motion: no-preference)',
     story: '(min-width: 1280px) and (min-height: 800px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
@@ -584,7 +587,7 @@ export function initMotion() {
     const casePage = document.querySelector('.case-page');
     if (conditions.motion && casePage) {
       const caseProject = projects.find((project) => casePage.classList.contains(`theme-${project.id}`));
-      const caseAccent = tokens[caseProject?.theme || 'production'];
+      const caseAccent = caseProject?.theme || 'production';
       const chapters = [...casePage.querySelectorAll('[data-case-chapter]')];
       const navLinks = [...casePage.querySelectorAll('[data-case-nav]')];
       const caseGestures = {
@@ -613,7 +616,7 @@ export function initMotion() {
           clipPath: 'inset(0 0 100% 0)', y: 18, duration: .58, ease: 'power3.out', clearProps: 'clipPath,transform', immediateRender: false,
           scrollTrigger: { trigger: chapter, start: 'top 90%', once: true },
         });
-        gsap.fromTo(chapter, { borderBottomColor: tokens.ink }, { borderBottomColor: caseAccent, duration: .45, ease: 'none', immediateRender: false, scrollTrigger: { trigger: chapter, start: 'top 72%', end: 'top 45%', scrub: .35 } });
+        gsap.fromTo(chapter, { borderBottomColor: currentThemeColor('ink') }, { borderBottomColor: currentThemeColor(caseAccent), duration: .45, ease: 'none', immediateRender: false, scrollTrigger: { trigger: chapter, start: 'top 72%', end: 'top 45%', scrub: .35, invalidateOnRefresh: true } });
         ScrollTrigger.create({
           trigger: chapter,
           start: 'top 80%',
@@ -672,5 +675,5 @@ export function initMotion() {
   });
   let active = true;
   document.fonts.ready.then(() => { if (active) ScrollTrigger.refresh(); });
-  return () => { active = false; activeStoryNavigation = null; media.revert(); };
+  return () => { active = false; activeStoryNavigation = null; themeRefreshController.abort(); media.revert(); };
 }

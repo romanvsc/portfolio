@@ -8,6 +8,7 @@ import { header, footer } from './components/layout.js';
 import { home } from './sections/home.js';
 import { caseStudy } from './sections/case-study.js';
 import { initInteractions } from './components/interactions.js';
+import { initThemeToggle } from './components/theme.js';
 import { initMotion, navigateToStoryAnchor } from './animations/index.js';
 
 const path = location.pathname.replace(/\/$/, '') || '/';
@@ -47,8 +48,8 @@ if (selected && pendingProjectTransition === selected.id && !reducedMotion && ha
 }
 let meta = document.querySelector('meta[name="theme-color"]');
 if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.append(meta); }
-meta.content = tokens.canvas;
-const cleanups = [initInteractions(), initMotion()];
+meta.content = document.documentElement.dataset.theme === 'dark' ? tokens.dark.canvas : tokens.canvas;
+const cleanups = [initThemeToggle(), initInteractions(), initMotion()];
 let disposed = false;
 function dispose() {
   if (disposed) return;

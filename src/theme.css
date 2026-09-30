@@ -37,3 +37,35 @@
   --font-sans: 'Manrope', sans-serif;
   --font-mono: 'DM Mono', monospace;
 }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-canvas: #211f1b;
+  --color-canvas-tonal: #2d2923;
+  --color-surface: #342f28;
+  --color-surface-soft: #3a352e;
+  --color-ink: #f4efe5;
+  --color-muted: #c6beb2;
+  --color-line: #e2d8ca;
+  --color-project-overlay: #00000055;
+  --color-project-copy-plate: #11100ecc;
+  --color-brand: #ff8a24;
+  --color-brand-hover: #ff9d49;
+  --color-brand-text: #ffb36d;
+  --color-brand-soft: #49301f;
+  --color-on-brand: #18140f;
+  --color-accent: #ffc94a;
+  --color-accent-ink: #18140f;
+  --color-focus: #70d9c9;
+  --color-production: #b7ce8c;
+  --color-production-soft: #333c2a;
+  --color-education: #9bd1de;
+  --color-education-soft: #243b42;
+  --color-wellness: #ffb483;
+  --color-wellness-soft: #493021;
+  --color-maintenance: #a9c8ef;
+  --color-maintenance-soft: #25394f;
+  --color-maintenance-signal: #ffd176;
+  --color-maintenance-signal-bright: #ffc05a;
+  --color-shadow-hard: #090806;
+}
