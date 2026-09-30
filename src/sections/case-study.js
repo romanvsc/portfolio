@@ -8,7 +8,7 @@ import { chapterTitles, caseNavigation } from './case-study/navigation.js';
 export { chapterTitles };
 
 function nextProjectLink(project) {
-  return `<a class="next-project theme-${project.id}" href="/proyectos/${project.id}"><div><span class="meta">NEXT / ${project.number}</span><strong>${project.title}</strong><span class="next-project-domain meta">${project.domain}</span></div><img src="${encodeURI(project.media.icon)}" alt="" aria-hidden="true" class="next-project-icon"><span class="next-project-arrow" aria-hidden="true">${arrow}</span></a>`;
+  return `<a class="next-project theme-${project.id}" data-project-link="${project.id}" href="/proyectos/${project.id}"><div><span class="meta">NEXT / ${project.number}</span><strong>${project.title}</strong><span class="next-project-domain meta">${project.domain}</span></div><img src="${encodeURI(project.media.icon)}" alt="" aria-hidden="true" class="next-project-icon" data-project-transition="${project.id}"><span class="next-project-arrow" aria-hidden="true">${arrow}</span></a>`;
 }
 
 export function caseStudy(project) {

@@ -9,7 +9,7 @@ export function imageMarkup(image, loading = 'lazy', className = '') {
 
 export function projectVisual(project) {
   const media = project.media;
-  return `<figure class="project-visual visual-${project.id}" data-project-illustration><div class="art-stage"><div class="project-icon-background" aria-hidden="true">${imageMarkup({ src: media.icon, width: 640, height: 640, alt: '' }, 'lazy', 'project-icon')}</div><span class="project-art-index meta" aria-hidden="true">IDENTIDAD / ${project.number}</span></div><figcaption><span>IDENTIDAD VISUAL / NO ES UNA CAPTURA</span><span>${project.steps.join(' → ')}</span></figcaption></figure>`;
+  return `<figure class="project-visual visual-${project.id}" data-project-illustration data-project-transition="${project.id}"><div class="art-stage"><div class="project-icon-background" aria-hidden="true">${imageMarkup({ src: media.icon, width: 640, height: 640, alt: '' }, 'lazy', 'project-icon')}</div><span class="project-art-index meta" aria-hidden="true">IDENTIDAD / ${project.number}</span></div><figcaption><span>IDENTIDAD VISUAL / NO ES UNA CAPTURA</span><span>${project.steps.join(' → ')}</span></figcaption></figure>`;
 }
 
 function screenshotFigure(image, index, loading = 'lazy', className = '') {

@@ -91,6 +91,9 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
   const projectCounter = projectScene?.querySelector('[data-project-counter]');
   const storySlider = document.querySelector('[data-story-slider]');
   const storyScrubber = document.querySelector('[data-story-scrubber]');
+  const storyMarkers = [...(document.querySelectorAll('[data-story-marker]') || [])];
+  const stackOrbit = stackScene?.querySelector('.stack-orbit');
+  const technologyDetail = stackScene?.querySelector('[data-tech-detail]');
   if (scenes.length !== 5 || projectSlides.length !== 4 || techItems.length !== 5 || !projectScene || !stackMascot) return () => {};
 
   const projectStates = projectSlides.map((panel, index) => ({
@@ -115,6 +118,8 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     { label: 'contacto', chapter: 'contacto', root: stage.querySelector('#contacto') },
   ];
   if (states.some((state) => !state.root)) return () => {};
+  const previousStoryLabel = stage.dataset.storyCurrent || stage.dataset.storyPreviousCurrent;
+  const previousStoryIndex = states.findIndex((state) => state.label === previousStoryLabel);
 
   const chapterIndices = { inicio: 0, proyectos: 1, tecnologias: 5, 'sobre-mi': 10, contacto: 11, contenido: 0 };
   let pendingFocusTimer;
@@ -136,7 +141,9 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     const project = state.panel && projects.find((item) => item.id === state.panel.dataset.storyProject);
     const technology = state.technology?.querySelector('h3')?.textContent.trim();
     const detail = project?.title || technology;
-    const currentLabel = `0${chapterIndex + 1} / 05 · ${chapterLabel.toLocaleUpperCase('es')}${detail ? ` / ${detail.toLocaleUpperCase('es')}` : ''}`;
+    const currentLabel = detail
+      ? `${chapterLabel.toLocaleUpperCase('es')} / ${detail.toLocaleUpperCase('es')}`
+      : `0${chapterIndex + 1} / 05 · ${chapterLabel.toLocaleUpperCase('es')}`;
     const valueLabel = detail ? `Escena ${chapterIndex + 1} de 5, ${chapterLabel}: ${detail}` : `Escena ${chapterIndex + 1} de 5: ${chapterLabel}`;
     return { currentLabel, valueLabel, chapterIndex };
   };
@@ -157,9 +164,15 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
         item.classList.toggle('is-compact', compact);
         item.setAttribute('aria-hidden', String(!revealed));
         item.inert = !revealed;
-        const description = item.querySelector('p');
-        if (description) description.setAttribute('aria-hidden', String(compact));
+        const description = item.querySelector('[data-tech-description]');
+        if (description) description.setAttribute('aria-hidden', 'true');
       });
+      const activeDescription = state.technology?.querySelector('[data-tech-description]');
+      if (technologyDetail) {
+        technologyDetail.textContent = activeDescription?.textContent.trim() || '';
+        technologyDetail.setAttribute('aria-hidden', String(!activeDescription));
+        technologyDetail.classList.toggle('is-visible', Boolean(activeDescription));
+      }
       if (projectCounter && state.projectNumber) projectCounter.textContent = state.projectNumber;
       stage.dataset.storyCurrent = state.label;
       const { currentLabel, valueLabel } = labelForState(state, stateIndex);
@@ -171,8 +184,44 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
       const value = String(Math.round(progress * Number(storySlider.max)));
       if (storySlider.value !== value) storySlider.value = value;
       storySlider.style.setProperty('--story-progress', `${progress * 100}%`);
+      storySlider.parentElement?.style.setProperty('--story-progress', `${progress * 100}%`);
+      storyScrubber?.style.setProperty('--story-progress', `${progress * 100}%`);
+      if (storyTimeline.duration()) {
+        const stateTime = progress * storyTimeline.duration();
+        storyMarkers.forEach((marker, index) => {
+          const stateTimeAtMarker = stateTimes[index] ?? 0;
+          marker.style.setProperty('--marker-progress', `${stateTimeAtMarker / storyTimeline.duration() * 100}%`);
+          marker.classList.toggle('is-passed', stateTimeAtMarker <= stateTime);
+          marker.classList.toggle('is-current', stateAtProgress(progress) === index);
+        });
+      }
     }
   };
+
+  const updateTechnologyOrbit = () => {
+    if (!storyTimeline || !stackOrbit) return;
+    const bounds = stackOrbit.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+    const stackStart = stateTimes[5] ?? 0;
+    const progress = Math.min(4, Math.max(0, (storyTimeline.time() - stackStart) / technologyTransition));
+    const orbitPhase = progress * (Math.PI * 2 / 5);
+    const itemWidth = techItems[0]?.getBoundingClientRect().width || 240;
+    const radiusX = Math.min(bounds.width * .42, Math.max(52, (bounds.width - itemWidth) / 2));
+    const radiusY = Math.min(bounds.height * .34, Math.max(58, bounds.height * .36));
+    techItems.forEach((item, index) => {
+      const angle = -Math.PI / 2 + index * (Math.PI * 2 / 5) + orbitPhase;
+      const depth = (Math.sin(angle) + 1) / 2;
+      item.style.setProperty('--orbit-x', `${Math.cos(angle) * radiusX}px`);
+      item.style.setProperty('--orbit-y', `${Math.sin(angle) * radiusY}px`);
+      item.style.setProperty('--orbit-scale', String(.88 + depth * .12));
+      item.style.setProperty('--orbit-depth', String(Math.round(depth * 20)));
+    });
+  };
+  const orbitResizeObserver = stackOrbit && 'ResizeObserver' in window
+    ? new ResizeObserver(updateTechnologyOrbit)
+    : null;
+  if (orbitResizeObserver) orbitResizeObserver.observe(stackOrbit);
+  else window.addEventListener('resize', updateTechnologyOrbit, { signal });
 
   stage.classList.add('story-stage--depth');
   stage.classList.toggle('story-stage--slider', sliderMode);
@@ -195,16 +244,14 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     zIndex: 0,
   }));
   gsap.set(projectSlides[0], { autoAlpha: 1, scale: 1, clipPath: 'inset(0% 0% 0% 0%)', zIndex: 1 });
-  gsap.set(techItems, { autoAlpha: 0, scale: .84, y: 18, transformOrigin: '50% 50%' });
+  gsap.set(techItems, { autoAlpha: 0 });
   storyTimeline = gsap.timeline({ paused: true });
 
   const appendTransition = (fromState, toState, start, duration) => {
     const isTechnologyReveal = fromState.techIndex !== undefined && toState.techIndex === fromState.techIndex + 1;
     if (isTechnologyReveal) {
-      const previousItem = fromState.technology;
       const nextItem = toState.technology;
-      storyTimeline.to(previousItem, { scale: .88, opacity: .82, duration, ease: 'none' }, start);
-      storyTimeline.to(nextItem, { autoAlpha: 1, scale: 1, y: 0, duration, ease: 'none' }, start);
+      storyTimeline.to(nextItem, { autoAlpha: 1, duration, ease: 'none' }, start);
       return;
     }
     const staysInProjects = fromState.root === projectScene && toState.root === projectScene;
@@ -231,7 +278,15 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
       start,
     );
     if (toState.techIndex === 0) {
-      storyTimeline.to(techItems[0], { autoAlpha: 1, scale: 1, y: 0, duration, ease: 'none' }, start);
+      storyTimeline.to(techItems[0], { autoAlpha: 1, duration, ease: 'none' }, start);
+    }
+    if (toState.chapter === 'sobre-mi') {
+      const aboutPhrase = toState.root.querySelector('[data-story-focus="about-phrase"]');
+      if (aboutPhrase) storyTimeline.fromTo(aboutPhrase,
+        { clipPath: 'inset(0% 0% 100% 0%)' },
+        { clipPath: 'inset(0% 0% 0% 0%)', duration: duration * .7, ease: 'none', immediateRender: false },
+        start + duration * .2,
+      );
     }
     if (fromState.label === 'inicio') {
       storyTimeline.to(fromState.root.querySelector('.name-first'), { xPercent: -8, duration, ease: 'none' }, start);
@@ -262,7 +317,10 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     return index;
   };
 
-  const syncTimelineState = () => updateState(stateAtProgress(storyTimeline.progress()));
+  const syncTimelineState = () => {
+    updateState(stateAtProgress(storyTimeline.progress()));
+    updateTechnologyOrbit();
+  };
   storyTimeline.eventCallback('onUpdate', syncTimelineState);
 
   if (sliderMode) {
@@ -290,14 +348,21 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     });
   }
 
-  const stateByAnchor = (id) => {
-    const index = chapterIndices[id];
+  const indexForAnchor = (id, projectId) => {
+    if (id === 'proyectos' && projectId) {
+      const projectIndex = projectSlides.findIndex((panel) => panel.dataset.storyProject === projectId);
+      if (projectIndex >= 0) return projectIndex + 1;
+    }
+    return chapterIndices[id];
+  };
+  const stateByAnchor = (id, projectId) => {
+    const index = indexForAnchor(id, projectId);
     if (index === undefined) return null;
     return states[index];
   };
 
-  const navigate = (id, { behavior = 'smooth', focus = true, updateHash = true } = {}) => {
-    const state = stateByAnchor(id);
+  const navigate = (id, { behavior = 'smooth', focus = true, updateHash = true, projectId } = {}) => {
+    const state = stateByAnchor(id, projectId);
     if (!state) return false;
     if (updateHash && location.hash !== `#${id}`) history.pushState(null, '', `${location.pathname}${location.search}#${id}`);
 
@@ -319,7 +384,7 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     };
 
     if (sliderMode) {
-      const targetIndex = chapterIndices[id];
+      const targetIndex = indexForAnchor(id, projectId);
       navigationTween?.kill();
       if (behavior === 'smooth') {
         navigationTween = storyTimeline.tweenTo(stateTimes[targetIndex], {
@@ -341,7 +406,7 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
     }
 
     if (!storyTrigger) return false;
-    const targetIndex = chapterIndices[id];
+    const targetIndex = indexForAnchor(id, projectId);
     const labelledScroll = storyTrigger.labelToScroll(`state-${state.label}`);
     const mappedScroll = storyTrigger.start + (stateTimes[targetIndex] / storyTimeline.duration()) * (storyTrigger.end - storyTrigger.start);
     const targetScroll = Number.isFinite(labelledScroll) && (targetIndex === 0 || labelledScroll > storyTrigger.start + 1)
@@ -386,10 +451,21 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
   }, { signal });
 
   const initialAnchor = decodeURIComponent(location.hash.slice(1));
-  const initialStateIndex = sliderMode ? (chapterIndices[initialAnchor] ?? 0) : 0;
-  if (sliderMode && initialStateIndex > 0) storyTimeline.pause().time(stateTimes[initialStateIndex]);
+  const projectOrigin = document.documentElement.dataset.storyProjectOrigin;
+  const initialStateIndex = previousStoryIndex >= 0
+    ? previousStoryIndex
+    : sliderMode ? (indexForAnchor(initialAnchor, projectOrigin) ?? 0) : 0;
+  if (initialStateIndex > 0) storyTimeline.pause().time(stateTimes[initialStateIndex]);
   updateState(initialStateIndex);
-  if (sliderMode && initialAnchor) requestAnimationFrame(() => {
+  updateTechnologyOrbit();
+  stage.removeAttribute('data-story-previous-current');
+  if (!sliderMode && previousStoryIndex > 0 && storyTrigger) {
+    ScrollTrigger.refresh();
+    const targetScroll = storyTrigger.start + (stateTimes[previousStoryIndex] / storyTimeline.duration()) * (storyTrigger.end - storyTrigger.start);
+    window.scrollTo({ top: targetScroll, behavior: 'instant' });
+    storyTrigger.update();
+  }
+  if (sliderMode && (initialAnchor || previousStoryIndex >= 0)) requestAnimationFrame(() => {
     stage.scrollTop = 0;
     if (window.scrollY) window.scrollTo({ top: 0, behavior: 'instant' });
   });
@@ -397,16 +473,25 @@ function enterSharedStory(stage, signal, { sliderMode = false } = {}) {
   return () => {
     window.clearTimeout(pendingFocusTimer);
     window.removeEventListener('scrollend', pendingFocusHandler);
+    orbitResizeObserver?.disconnect();
     navigationTween?.kill();
     if (activeStoryNavigation === navigate) activeStoryNavigation = null;
+    if (stage.dataset.storyCurrent) stage.dataset.storyPreviousCurrent = stage.dataset.storyCurrent;
     scenes.forEach((scene) => setAvailable(scene, true));
     projectSlides.forEach((panel) => setAvailable(panel, true));
     techItems.forEach((item) => {
       item.classList.remove('is-revealed', 'is-active', 'is-compact');
+      ['--orbit-x', '--orbit-y', '--orbit-scale', '--orbit-depth'].forEach((property) => item.style.removeProperty(property));
       item.removeAttribute('aria-hidden');
       item.inert = false;
-      item.querySelector('p')?.removeAttribute('aria-hidden');
+      item.querySelector('[data-tech-description]')?.removeAttribute('aria-hidden');
     });
+    if (technologyDetail) {
+      technologyDetail.textContent = '';
+      technologyDetail.classList.remove('is-visible');
+      technologyDetail.setAttribute('aria-hidden', 'true');
+    }
+    storyMarkers.forEach((marker) => { marker.classList.remove('is-passed'); marker.style.removeProperty('--marker-progress'); });
     document.querySelectorAll('[data-progress-link]').forEach((link) => link.removeAttribute('aria-current'));
     if (storySlider) {
       storySlider.disabled = true;
@@ -461,6 +546,13 @@ function initHomeFlowMotion(conditions, signal) {
     clipPath: 'inset(0 0 100% 0)', y: 16, duration: .7, ease: 'power3.out', clearProps: 'all',
     immediateRender: false, scrollTrigger: { trigger: heading, start: 'top 94%', once: true },
   }));
+  const aboutPhrase = document.querySelector('#sobre-mi [data-story-focus="about-phrase"]');
+  if (aboutPhrase) gsap.fromTo(aboutPhrase,
+    { clipPath: 'inset(0% 0% 100% 0%)' },
+    { clipPath: 'inset(0% 0% 0% 0%)', duration: .65, ease: 'power2.out', clearProps: 'clipPath', immediateRender: false,
+      scrollTrigger: { trigger: aboutPhrase, start: 'top 86%', once: true },
+    },
+  );
 
 }
 
@@ -535,6 +627,21 @@ export function initMotion() {
         scrollTrigger: { trigger: line.closest('.case-chapter'), start: 'top 72%', once: true },
       }));
       navLinks.forEach((link) => link.addEventListener('click', () => setActiveChapter(link.dataset.caseNav), { signal }));
+
+      const capture = casePage.querySelector('[data-capture-reveal]');
+      if (capture) {
+        const revealCapture = () => {
+          if (!capture.isConnected || !capture.naturalWidth) return;
+          gsap.fromTo(capture,
+            { clipPath: 'inset(48% 0 48% 0)', scale: .98 },
+            { clipPath: 'inset(0)', scale: 1, duration: .72, ease: 'power2.out', clearProps: 'clipPath,transform', immediateRender: false,
+              scrollTrigger: { trigger: capture, start: 'top 86%', once: true },
+            },
+          );
+        };
+        if (capture.complete && capture.naturalWidth) revealCapture();
+        else capture.addEventListener('load', revealCapture, { once: true, signal });
+      }
     }
 
     document.querySelectorAll('.dorito:not(.dorito-companion) summary').forEach((item) => {
