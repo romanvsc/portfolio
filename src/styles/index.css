@@ -1,0 +1,185 @@
+@import 'tailwindcss';
+
+/* Yuji Syuku recortada a los ~40 glifos que usa el sitio (17 KB, OFL). Si agregás kanji/kana nuevos,
+   regenerala: fonts.googleapis.com/css2?family=Yuji+Syuku&text=<glifos> */
+@font-face {
+  font-family: 'Yuji Syuku';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/yuji-syuku-subset.woff2') format('woff2');
+}
+
+/* Tokens: primitivos → semánticos → moods. Ver DESIGN.md §3. Componentes usan SOLO semánticos. */
+
+@theme {
+  --color-*: initial; /* sin paleta default de Tailwind: obliga a usar semánticos */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Semánticos (valores vienen de las variables de mood en :root) */
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-shadow: var(--shadow);
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+  --color-on-accent: var(--on-accent);
+  --color-sun: var(--sun);
+  --color-mist: var(--mist);
+
+  --font-display: 'Dela Gothic One', 'Zen Kaku Gothic New', sans-serif;
+  --font-sans: 'Zen Kaku Gothic New', system-ui, sans-serif;
+  --font-brush: 'Yuji Syuku', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --text-display-xl: clamp(3rem, 10vw, 10.5rem);
+  --text-display-xl--line-height: 0.88;
+  --text-display-l: clamp(1.9rem, 6vw, 5.5rem);
+  --text-display-l--line-height: 0.95;
+
+  --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  /* Primitivos */
+  --sumi-950: #070a08;
+  --sumi-900: #0d120f;
+  --sumi-800: #16201a;
+  --moss-700: #1e3b2b;
+  --moss-600: #25483a;
+  --jade-600: #1f7a55;
+  --jade-500: #2e9e6e;
+  --matcha-300: #a8d672;
+  --wakaba-200: #d4f28c;
+  --washi-50: #f4f2ea;
+  --washi-100: #e8e5d8;
+
+  /* Mood dawn para el primer paint. Fuente de verdad: world/moods.ts (World los tweenea en :root). */
+  --surface: var(--washi-50);
+  --surface-raised: var(--washi-100);
+  --ink: var(--sumi-950);
+  --ink-muted: #3a4a40;
+  --line: var(--sumi-950);
+  --shadow: var(--sumi-950);
+  --accent: var(--jade-600);
+  --accent-bright: var(--jade-500);
+  --on-accent: var(--washi-50);
+  --sun: var(--jade-500);
+  --mist: var(--washi-100);
+
+  color-scheme: light;
+}
+
+html {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body {
+  background: var(--surface);
+  margin: 0;
+  overflow-x: clip;
+}
+::selection {
+  background: var(--accent-bright);
+  color: var(--on-accent);
+}
+:focus-visible {
+  outline: 3px solid var(--accent-bright);
+  outline-offset: 3px;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Neobrutalismo — DESIGN.md §5 */
+@utility brutal-border {
+  border: 3px solid var(--color-line);
+}
+@utility brutal-shadow {
+  box-shadow: 6px 6px 0 var(--color-shadow);
+}
+@utility brutal-press {
+  transition:
+    transform 140ms var(--ease-brush),
+    box-shadow 140ms var(--ease-brush);
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--color-shadow);
+  }
+  &:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 var(--color-shadow);
+  }
+}
+@utility brutal-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--color-line) 14%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--color-line) 14%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+@utility label-mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Hojas cayendo — art/Leaves.tsx */
+@keyframes leaf-fall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 8vw), 112vh, 0) rotate(var(--spin, 540deg));
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Títulos display: sombra dura en acento para separarlos del arte en tinta (neobrutalismo) */
+@utility display-shadow {
+  text-shadow:
+    0.05em 0.05em 0 var(--color-accent),
+    0 0 0.02em var(--color-surface);
+}
+
+/* Bloque de texto legible sobre el arte */
+@utility brutal-panel {
+  background: var(--color-surface);
+  border: 3px solid var(--color-line);
+  box-shadow: 6px 6px 0 var(--color-shadow);
+  padding: 0.9rem 1.1rem;
+}
+
+/* Radio del círculo que revela la foto a color en el retrato (animable gracias a @property) */
+@property --reveal-r {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
