@@ -1,31 +1,30 @@
 import { World, Station } from '@/world/World';
 import { STATIONS, type StationId } from '@/world/stations';
 import { useLang } from '@/i18n/LangContext';
-import { GateScene } from '@/scenes/Gate';
-import { PathScene } from '@/scenes/Path';
-import { DojoScene } from '@/scenes/Dojo';
-import { ProjectGroupScene } from '@/scenes/ToriiTunnel';
-import { ForestScene } from '@/scenes/Forest';
-import { ShrineScene } from '@/scenes/Shrine';
+import { SenalScene } from '@/scenes/Senal';
+import { QuienScene } from '@/scenes/Quien';
+import { GuiaScene } from '@/scenes/Guia';
+import { ProjectGroupScene } from '@/scenes/Canales';
+import { AjusteScene } from '@/scenes/Ajuste';
+import { ContactoScene } from '@/scenes/Contacto';
 import { FlatStory } from '@/scenes/FlatStory';
 import { Backdrop } from '@/components/Backdrop';
 import { Chrome } from '@/components/Chrome';
 import { Loader } from '@/components/Loader';
 import { CaseScroll } from '@/components/CaseScroll';
 
-// ?motion=off fuerza la versión sin animaciones (enlace en el footer)
-const reduced =
-  matchMedia('(prefers-reduced-motion: reduce)').matches || new URLSearchParams(location.search).get('motion') === 'off';
+// prefers-reduced-motion o ?motion=off (enlace en el footer): lo decide el script de index.html
+const reduced = 'flat' in document.documentElement.dataset;
 
 function scene(id: StationId) {
   switch (id) {
-    case 'mon': return <GateScene />;
-    case 'michi': return <PathScene />;
-    case 'waza': return <DojoScene />;
+    case 'senal': return <SenalScene />;
+    case 'quien': return <QuienScene />;
+    case 'guia': return <GuiaScene />;
     case 'sistemas': return <ProjectGroupScene path="system" />;
     case 'webs': return <ProjectGroupScene path="web" />;
-    case 'mori': return <ForestScene />;
-    case 'en': return <ShrineScene />;
+    case 'ajuste': return <AjusteScene />;
+    case 'contacto': return <ContactoScene />;
   }
 }
 
@@ -34,11 +33,11 @@ export default function App() {
   if (reduced) return <><FlatStory /><CaseScroll /></>;
   return (
     <>
-      <a href="#main" className="label-mono sr-only z-90 bg-accent px-3 py-2 text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
+      <a href="#main" className="label-px sr-only z-90 bg-accent px-3 py-2 text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
         {t.meta.skip}
       </a>
-      <a href="?motion=off" className="label-mono sr-only z-90 bg-accent px-3 py-2 text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
-        {t.en.flat}
+      <a href="?motion=off" className="label-px sr-only z-90 bg-accent px-3 py-2 text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
+        {t.contacto.flat}
       </a>
       <World background={<Backdrop />} overlay={<Chrome />}>
         {STATIONS.map((s, i) => <Station key={s.id} index={i}>{scene(s.id)}</Station>)}
