@@ -5,7 +5,11 @@ Fuente de verdad del contenido. **No inventar** nada que no esté acá: ni métr
 ## Perfil
 - **Nombre:** Román Vogel Corach
 - **Edad:** 24
-- **Formación:** **estudiante** de Analista de Sistemas (no egresado)
+- **Formación:** **estudiante** de Analista de Sistemas (no egresado) · Instituto iAes Fundación Lapacho, Puerto Rico, Misiones · 2023 – en curso
+- **Experiencia laboral** (confirmada 2026-11-08):
+  - Cooperativa Luz y Fuerza de Libertador General San Martín Ltda. · Auxiliar técnico · 2025 – actualidad (tareas: pendiente)
+  - Forestal Garuhapé · Auxiliar administrativo · 2023 – 2025 · gestión de mantenimiento y control de combustible
+- **CV:** `npm run cv` → `public/cv/roman-vogel-corach-cv-{es,en}.pdf` (textos propios en `src/content/cv.ts`; incluye el teléfono)
 - **Rol:** desarrollador web y de sistemas a medida
 - **Email:** romancorach@gmail.com
 - **GitHub:** https://github.com/romanvsc
@@ -91,17 +95,38 @@ Fuente de verdad del contenido. **No inventar** nada que no esté acá: ni métr
 - **Features:** landings por servicio (IA, automatización, WhatsApp, dashboards, mantenimiento, API de facturación ContaFlow); encuesta para contadores; medición de los clics de contacto; accesibilidad (skip link, ARIA, reduced motion)
 - **Imágenes:** `../web_vogel_consultoria/public/og-image.png`
 
+## Casos de estudio (borrador 2026-10-19, a revisar por Román)
+Texto completo ES/EN en `src/content/projects.ts` (`solution`, `decisions`, `outcome`). Armado sólo con los datos de arriba; sin métricas.
+- **IPAC:** API Django/DRF separada del frontend Vue · permisos por sede en el modelo de roles · importación sin duplicados para migrar. **Resultado:** las dos sedes administran desde una sola plataforma web
+- **Registro de Producción:** offline-first con Dexie/IndexedDB · cola de pendientes por rol · backend hexagonal/DDD. **Resultado:** en uso para Indufor y FG
+- **Mantenimiento:** solicitudes separadas de las OT · plan preventivo que se recalcula al cerrar la OT · PWA con push y QR por unidad. **Resultado:** sin dato (se muestra el estado: etapas 2 a 4)
+- **Gimnasio:** Supabase + RLS en vez de backend propio · historial de pagos no editable · check-in inmediato. **Resultado:** lo usan en recepción para cobrar y controlar el acceso
+- **Webs:** Forestal (contenido en JSON, formulario sin JS, SEO técnico) · FGPY (datos estructurados, Eleventy → React) · AN&A (export estático de Next, capítulos, axe) · Vogel (medición de clics de contacto, Playwright + axe). **Resultado:** sin dato
+
 ## Números reales que se pueden mostrar
 - 8 proyectos destacados (4 sistemas + 4 webs)
 - 2 países con clientes: Argentina y Paraguay
 - 6 sistemas/sitios con URL pública (no se verificaron en vivo; revisarlo antes del deploy)
 
+## Antes de publicar (2026-11-08)
+Lo de diseño está cerrado: no cambiar de dirección; se ajusta sobre SEÑAL con lo que salga de la prueba.
+- [x] Hero con un solo CTA fuerte ("Ver proyectos"); "Escribime" como enlace secundario
+- [x] Revisión a 1024×768 con el marco nuevo
+- [ ] Prueba con 2–3 personas (al menos una no técnica, desde el celular): ¿encuentran los proyectos y el contacto sin ayuda?
+- [x] CV en PDF (ES + EN), enlazado desde Contacto
+- [ ] Dominio y URLs públicas verificadas (ver Pendientes)
+- [ ] Commit de la rama `rediseno-senal` y merge a `main` (sólo con OK de Román)
+- [ ] Deploy (sólo con OK de Román) y Lighthouse sobre la URL real
+
 ## Pendientes (a confirmar con Román)
 - [x] Ciudad: Puerto Rico, Misiones
 - [x] Rol en cada proyecto (ver cada proyecto)
 - [ ] Relación con Vogel Consultoría (¿socio, empleado, fundador?)
-- [ ] CV en PDF (el portfolio anterior no tenía)
+- [x] CV en PDF (2026-11-08, `npm run cv`)
+- [ ] CV: tareas en la Cooperativa, nivel de inglés y URL del portfolio cuando haya dominio
 - [x] WhatsApp (botón en contacto y menú)
 - [ ] Dominio para el deploy
 - [ ] Verificar que las URLs públicas respondan y qué versión está online (los rediseños de Forestal pueden no estar publicados)
+- [ ] Revisar el borrador de solución / decisiones / resultado de los 8 proyectos (2026-10-19)
+- [ ] Resultado de las webs y de Mantenimiento: ¿hay algún hecho verificable para mostrar?
 - [ ] Forestal Garuhapé tiene fotos de equipo y ubicaciones sin verificar; Almada Neri tiene datos de equipo de ejemplo. No usarlos como prueba
