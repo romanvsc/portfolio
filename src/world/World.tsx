@@ -19,6 +19,10 @@ interface WorldApi {
   active: number;
   /** lleva la cámara a la estación i (parada `stop` en los grupos de proyectos) */
   goTo: (i: number, immediate?: boolean, stop?: number) => void;
+  /** cambio de canal: salto instantáneo + estática (controles de la TV, CTAs, paginador) */
+  cut: (i: number, stop?: number) => void;
+  /** cuántos cortes hubo: Backdrop lo usa de key para el destello */
+  cuts: number;
 }
 
 const WorldCtx = createContext<WorldApi | null>(null);
@@ -27,6 +31,8 @@ export const useWorld = () => {
   if (!w) throw new Error('useWorld fuera de <World>');
   return w;
 };
+/** null fuera del World (FlatStory). */
+export const useWorldMaybe = () => useContext(WorldCtx);
 
 const perStation = () => window.innerHeight * 1.15;
 const MOUNT_RANGE = 2;
@@ -51,7 +57,9 @@ export function World({ children, background, overlay }: { children: ReactNode; 
 
   const activeRef = useRef(0);
   const goTo = useCallback((i: number, immediate = false, stop = 0) => {
-    lenisRef.current?.scrollTo(stationScrollY(i, perStation(), stop), {
+    const y = stationScrollY(i, perStation(), stop);
+    if (!Number.isFinite(y)) return; // un NaN deja a Lenis trabado para siempre
+    lenisRef.current?.scrollTo(y, {
       immediate, duration: Math.min(2.4, 0.9 + Math.abs(i - activeRef.current) * 0.18),
       easing: (t: number) => (t < 0.5 ? 16 * t ** 5 : 1 - (-2 * t + 2) ** 5 / 2), // expo-ish inOut
     });
@@ -114,7 +122,7 @@ export function World({ children, background, overlay }: { children: ReactNode; 
 
     // Foco por teclado en una estación lejana → llevar la cámara hasta ella
     const onFocus = (e: FocusEvent) => {
-      const st = (e.target as HTMLElement).closest<HTMLElement>('[data-station]');
+      const st = (e.target as HTMLElement).closest<HTMLElement>('#main [data-station]'); // el <html> también lleva data-station (id, no índice)
       if (!st) return;
       const i = Number(st.dataset.station);
       if (i !== activeRef.current) goTo(i);
@@ -139,14 +147,20 @@ export function World({ children, background, overlay }: { children: ReactNode; 
     };
   }, [goTo, progress]);
 
-  const api = useMemo(() => ({ register, progress, active, goTo }), [register, progress, active, goTo]);
+  const [cuts, setCuts] = useState(0);
+  const cut = useCallback((i: number, stop = 0) => {
+    setCuts((c) => c + 1);
+    goTo(i, true, stop);
+  }, [goTo]);
+
+  const api = useMemo(() => ({ register, progress, active, goTo, cut, cuts }), [register, progress, active, goTo, cut, cuts]);
 
   return (
     <WorldCtx.Provider value={api}>
       <div style={{ height: spacer }} aria-hidden />
       {background}
       <div
-        className="fixed inset-0 overflow-hidden"
+        className="tv-screen"
         style={{ perspective: `${PERSPECTIVE}px`, perspectiveOrigin: '50% 50%' }}
       >
         {/* preserve-3d: el navegador ordena las capas por Z real. Las capas deben ser hijas DIRECTAS
