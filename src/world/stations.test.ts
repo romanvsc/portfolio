@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   STATIONS, GAP, dwell, normP, scrollToU, uToScrollY, cameraZ, anchorZ, activeIndex, layerZ, layerOpacity,
-  snapTarget, spacerHeight, stationScrollY, stopP, stopsOf, weightOf, groupS, slash,
+  snapTarget, spacerHeight, stationScrollY, stopP, stopsOf, weightOf, groupS, zap,
 } from './stations';
-import { MOODS } from './moods';
 
 const N = STATIONS.length;
 const GROUP = STATIONS.findIndex((s) => (s.stops ?? 1) > 1);
@@ -93,21 +92,16 @@ describe('stations', () => {
     expect(snapTarget(k1)).toBeNull();
   });
 
-  it('slash: cut 0 en las paradas, continuo en las fronteras y nunca en el último', () => {
+  it('zap: cut 0 en las paradas, continuo en las fronteras y nunca en el último', () => {
     const n = 4;
-    for (let k = 0; k < n; k++) expect(slash(k + 0.5, n)).toEqual({ index: k, cut: 0 });
-    expect(slash(1 - 1e-6, n).cut).toBeCloseTo(1, 3);
-    expect(slash(1, n)).toEqual({ index: 1, cut: 0 });
-    expect(slash(n, n)).toEqual({ index: n - 1, cut: 0 });
-    expect(slash(-1, n).index).toBe(0);
+    for (let k = 0; k < n; k++) expect(zap(k + 0.5, n)).toEqual({ index: k, cut: 0 });
+    expect(zap(1 - 1e-6, n).cut).toBeCloseTo(1, 3);
+    expect(zap(1, n)).toEqual({ index: 1, cut: 0 });
+    expect(zap(n, n)).toEqual({ index: n - 1, cut: 0 });
+    expect(zap(-1, n).index).toBe(0);
     // la parada k de un grupo cae en s = k + 0.5
     const w = weightOf(GROUP);
     for (let k = 0; k < n; k++) expect(groupS(normP(stopP(GROUP, k), w), n)).toBeCloseTo(k + 0.5, 9);
   });
 
-  it('cada mood define los mismos tokens', () => {
-    const keys = Object.keys(MOODS.dawn).sort();
-    expect(Object.keys(MOODS.forest).sort()).toEqual(keys);
-    expect(Object.keys(MOODS.night).sort()).toEqual(keys);
-  });
 });

@@ -1,27 +1,28 @@
-// Fuente de verdad de los moods (DESIGN.md §3). index.css sólo repite dawn para el primer paint.
-export type Mood = 'dawn' | 'forest' | 'night';
+// Fuente de verdad del color (DESIGN.md §3). Tríada 150° / 30° / 270°: fósforo, brasa, uva.
+// index.css sólo repite el mood fosforo para el primer paint; scripts/optimize-images.mjs hornea con P.
+export type Mood = 'fosforo' | 'uva' | 'brasa';
 
-const P = {
-  sumi950: '#070a08', sumi800: '#16201a', moss700: '#1e3b2b', moss600: '#25483a',
-  jade600: '#1f7a55', jade500: '#2e9e6e', matcha300: '#a8d672', wakaba200: '#d4f28c',
-  washi50: '#f4f2ea', washi100: '#e8e5d8',
+export const P = {
+  fosforo950: '#04140e', fosforo800: '#0e3b2a', fosforo500: '#1fc27a', fosforo300: '#7cf0b4',
+  brasa950: '#2a0e04', brasa900: '#4a1a08', brasa800: '#b33a0b', brasa500: '#ff6a1f', brasa300: '#ffb27a',
+  uva950: '#120a22', uva800: '#2a1c4a', uva500: '#7b5cf5', uva300: '#b9a7ff',
+  tinta: '#0b0812', papel200: '#e6d8bf', papel50: '#f5ecdc',
 };
 
+const base = { ink: P.papel50, line: P.tinta, 'on-accent': P.tinta, paper: P.papel50, 'on-paper': P.tinta };
+
 export const MOODS: Record<Mood, Record<string, string>> = {
-  dawn: {
-    surface: P.washi50, 'surface-raised': P.washi100, ink: P.sumi950, 'ink-muted': '#3a4a40',
-    line: P.sumi950, shadow: P.sumi950, accent: P.jade600, 'accent-bright': P.jade500,
-    'on-accent': P.washi50, sun: P.jade500, mist: P.washi100,
+  fosforo: {
+    ...base, surface: P.fosforo950, 'surface-raised': P.fosforo800, 'ink-muted': '#a8d9c2', shadow: P.tinta,
+    accent: P.fosforo500, 'accent-alt': P.brasa500, pop: P.uva300, glow: P.fosforo300,
   },
-  forest: {
-    surface: P.moss700, 'surface-raised': P.moss600, ink: P.washi50, 'ink-muted': '#c9d4c4',
-    line: P.sumi950, shadow: P.sumi950, accent: P.matcha300, 'accent-bright': P.wakaba200,
-    'on-accent': P.sumi950, sun: P.jade500, mist: '#2b5240',
+  uva: {
+    ...base, surface: P.uva950, 'surface-raised': P.uva800, 'ink-muted': '#c9bee6', shadow: P.tinta,
+    accent: P.fosforo500, 'accent-alt': P.uva300, pop: P.brasa500, glow: P.uva300,
   },
-  night: {
-    surface: P.sumi950, 'surface-raised': P.sumi800, ink: P.washi50, 'ink-muted': '#a9b5ac',
-    line: P.wakaba200, shadow: P.jade500, accent: P.wakaba200, 'accent-bright': P.wakaba200,
-    'on-accent': P.sumi950, sun: P.jade600, mist: P.sumi800,
+  brasa: {
+    ...base, surface: P.brasa950, 'surface-raised': P.brasa900, 'ink-muted': '#f2c3a3', shadow: P.brasa800,
+    accent: P.brasa500, 'accent-alt': P.fosforo300, pop: P.uva300, glow: P.brasa300,
   },
 };
 

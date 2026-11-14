@@ -1,24 +1,25 @@
 // Matemática pura del viaje en Z. Sin DOM: testeada en stations.test.ts.
 import type { Mood } from './moods';
 
-export type StationId = 'mon' | 'michi' | 'waza' | 'sistemas' | 'webs' | 'mori' | 'en';
+export type StationId = 'senal' | 'quien' | 'guia' | 'sistemas' | 'webs' | 'ajuste' | 'contacto';
 
 export interface StationDef {
   id: StationId;
-  kanji: string;
+  /** número de canal en el OSD */
+  ch: string;
   mood: Mood;
   /** paradas dentro de la estación (grupos de proyectos: 4). Default 1. */
   stops?: number;
 }
 
 export const STATIONS: StationDef[] = [
-  { id: 'mon', kanji: '門', mood: 'dawn' },
-  { id: 'michi', kanji: '道', mood: 'dawn' },
-  { id: 'waza', kanji: '技', mood: 'forest' },
-  { id: 'sistemas', kanji: '仕', mood: 'forest', stops: 4 },
-  { id: 'webs', kanji: '網', mood: 'forest', stops: 4 },
-  { id: 'mori', kanji: '森', mood: 'forest' },
-  { id: 'en', kanji: '縁', mood: 'night' },
+  { id: 'senal', ch: '01', mood: 'fosforo' },
+  { id: 'quien', ch: '02', mood: 'uva' },
+  { id: 'guia', ch: '03', mood: 'fosforo' },
+  { id: 'sistemas', ch: '04', mood: 'fosforo', stops: 4 },
+  { id: 'webs', ch: '05', mood: 'brasa', stops: 4 },
+  { id: 'ajuste', ch: '06', mood: 'uva' },
+  { id: 'contacto', ch: '404', mood: 'brasa' },
 ];
 
 /** unidades Z entre estaciones */
@@ -109,10 +110,10 @@ export const activeIndex = (u: number) =>
 export const groupS = (pNorm: number, n: number) => clamp((pNorm - 0.35) / 0.3) * n;
 
 /**
- * Corte de katana entre proyectos: index = proyecto que se muestra, cut 0→1 = cuánto se partió
- * para dar paso al siguiente. cut = 0 en cada parada (centro de segmento) y en el último proyecto.
+ * Zapping entre proyectos: index = proyecto que se muestra, cut 0→1 = cuánto avanzó el cambio de canal
+ * hacia el siguiente. cut = 0 en cada parada (centro de segmento) y en el último proyecto.
  */
-export function slash(s: number, n: number): { index: number; cut: number } {
+export function zap(s: number, n: number): { index: number; cut: number } {
   const index = Math.min(n - 1, Math.max(0, Math.floor(s)));
   const cut = index < n - 1 ? smoothstep(0.62, 0.98, s - index) : 0;
   return { index, cut };

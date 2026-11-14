@@ -1,15 +1,5 @@
 @import 'tailwindcss';
 
-/* Yuji Syuku recortada a los ~40 glifos que usa el sitio (17 KB, OFL). Si agregás kanji/kana nuevos,
-   regenerala: fonts.googleapis.com/css2?family=Yuji+Syuku&text=<glifos> */
-@font-face {
-  font-family: 'Yuji Syuku';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../assets/fonts/yuji-syuku-subset.woff2') format('woff2');
-}
-
 /* Tokens: primitivos → semánticos → moods. Ver DESIGN.md §3. Componentes usan SOLO semánticos. */
 
 @theme {
@@ -25,52 +15,53 @@
   --color-line: var(--line);
   --color-shadow: var(--shadow);
   --color-accent: var(--accent);
-  --color-accent-bright: var(--accent-bright);
+  --color-accent-alt: var(--accent-alt);
+  --color-pop: var(--pop);
   --color-on-accent: var(--on-accent);
-  --color-sun: var(--sun);
-  --color-mist: var(--mist);
+  --color-glow: var(--glow);
+  --color-paper: var(--paper);
+  --color-on-paper: var(--on-paper);
 
-  --font-display: 'Dela Gothic One', 'Zen Kaku Gothic New', sans-serif;
-  --font-sans: 'Zen Kaku Gothic New', system-ui, sans-serif;
-  --font-brush: 'Yuji Syuku', serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Anton', 'Space Grotesk', sans-serif;
+  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  --font-pixel: 'Pixelify Sans', ui-monospace, monospace;
+  --font-hand: 'Caveat Brush', cursive;
 
-  --text-display-xl: clamp(3rem, 10vw, 10.5rem);
-  --text-display-xl--line-height: 0.88;
-  --text-display-l: clamp(1.9rem, 6vw, 5.5rem);
-  --text-display-l--line-height: 0.95;
+  --text-display-xl: clamp(3.6rem, 12.5vw, 12rem);
+  --text-display-xl--line-height: 0.86;
+  --text-display-l: clamp(2.4rem, 7vw, 6.5rem);
+  --text-display-l--line-height: 0.92;
 
-  --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-  /* Primitivos */
-  --sumi-950: #070a08;
-  --sumi-900: #0d120f;
-  --sumi-800: #16201a;
-  --moss-700: #1e3b2b;
-  --moss-600: #25483a;
-  --jade-600: #1f7a55;
-  --jade-500: #2e9e6e;
-  --matcha-300: #a8d672;
-  --wakaba-200: #d4f28c;
-  --washi-50: #f4f2ea;
-  --washi-100: #e8e5d8;
+  /* Primitivos (fuente de verdad: world/moods.ts → P) */
+  --fosforo-950: #04140e;
+  --fosforo-800: #0e3b2a;
+  --fosforo-500: #1fc27a;
+  --fosforo-300: #7cf0b4;
+  --tinta: #0b0812;
+  --papel-50: #f5ecdc;
+  --uva-300: #b9a7ff;
+  --brasa-500: #ff6a1f;
 
-  /* Mood dawn para el primer paint. Fuente de verdad: world/moods.ts (World los tweenea en :root). */
-  --surface: var(--washi-50);
-  --surface-raised: var(--washi-100);
-  --ink: var(--sumi-950);
-  --ink-muted: #3a4a40;
-  --line: var(--sumi-950);
-  --shadow: var(--sumi-950);
-  --accent: var(--jade-600);
-  --accent-bright: var(--jade-500);
-  --on-accent: var(--washi-50);
-  --sun: var(--jade-500);
-  --mist: var(--washi-100);
+  /* Mood fosforo para el primer paint. World los tweenea en :root al cambiar de canal. */
+  --surface: var(--fosforo-950);
+  --surface-raised: var(--fosforo-800);
+  --ink: var(--papel-50);
+  --ink-muted: #a8d9c2;
+  --line: var(--tinta);
+  --shadow: var(--tinta);
+  --accent: var(--fosforo-500);
+  --accent-alt: var(--brasa-500);
+  --pop: var(--uva-300);
+  --on-accent: var(--tinta);
+  --glow: var(--fosforo-300);
+  --paper: var(--papel-50);
+  --on-paper: var(--tinta);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html {
@@ -86,11 +77,11 @@ body {
   overflow-x: clip;
 }
 ::selection {
-  background: var(--accent-bright);
+  background: var(--accent);
   color: var(--on-accent);
 }
 :focus-visible {
-  outline: 3px solid var(--accent-bright);
+  outline: 3px solid var(--glow);
   outline-offset: 3px;
 }
 
@@ -103,7 +94,7 @@ html.lenis body {
   scroll-behavior: auto !important;
 }
 
-/* Neobrutalismo — DESIGN.md §5 */
+/* Bloques duros (stickers, paneles, botones) — DESIGN.md §5 */
 @utility brutal-border {
   border: 3px solid var(--color-line);
 }
@@ -112,9 +103,10 @@ html.lenis body {
 }
 @utility brutal-press {
   transition:
-    transform 140ms var(--ease-brush),
-    box-shadow 140ms var(--ease-brush);
-  &:hover {
+    transform 140ms var(--ease-snap),
+    box-shadow 140ms var(--ease-snap);
+  &:hover,
+  &:focus-visible {
     transform: translate(-2px, -2px);
     box-shadow: 8px 8px 0 var(--color-shadow);
   }
@@ -123,32 +115,220 @@ html.lenis body {
     box-shadow: 2px 2px 0 var(--color-shadow);
   }
 }
-@utility brutal-grid {
-  background-image:
-    linear-gradient(color-mix(in oklab, var(--color-line) 14%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in oklab, var(--color-line) 14%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
+/* Bloque de texto legible sobre el arte */
+@utility brutal-panel {
+  background: var(--color-surface);
+  border: 3px solid var(--color-line);
+  box-shadow: 6px 6px 0 var(--color-shadow);
+  padding: 0.9rem 1.1rem;
 }
-@utility label-mono {
-  font-family: var(--font-mono);
+/* Etiquetas, OSD, metadatos */
+@utility label-px {
+  font-family: var(--font-sans);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+/* Pixel: sólo en tamaño grande (≥ 1rem). OSD, números de canal, 404 */
+@utility osd {
+  font-family: var(--font-pixel);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   font-weight: 500;
 }
+/* Etiqueta tipo ref1: papel, borde, un poco girada */
+@utility sticker {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--color-paper);
+  color: var(--color-on-paper);
+  border: 3px solid var(--color-line);
+  border-radius: 0.6rem;
+  box-shadow: 4px 4px 0 var(--color-shadow);
+  padding: 0.3em 0.8em;
+  line-height: 1.1;
+  transition:
+    rotate 250ms var(--ease-snap),
+    translate 250ms var(--ease-snap);
+  &:hover {
+    rotate: 0deg;
+    translate: 0 -2px;
+  }
+}
 
-/* Hojas cayendo — art/Leaves.tsx */
-@keyframes leaf-fall {
-  0% {
-    transform: translate3d(0, -12vh, 0) rotate(0deg);
+/* Títulos en pantalla: brillo de fósforo */
+@utility glow-text {
+  text-shadow:
+    0 0 0.03em var(--color-glow),
+    0 0 0.22em color-mix(in oklab, var(--color-glow) 40%, transparent);
+}
+/* Rayado diagonal de fondo (ref1) */
+@utility hatch {
+  background-image: repeating-linear-gradient(
+    -55deg,
+    color-mix(in oklab, var(--color-glow) 16%, transparent) 0 3px,
+    transparent 3px 14px
+  );
+}
+/* Scanlines del CRT: overlay estático (sin animar: no repinta) */
+@utility scanlines {
+  background-image: repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / 0.28) 2px 4px);
+}
+/* Viñeta y curvatura de la pantalla */
+@utility crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.55) 100%);
+}
+/* Papel arrugado (textura gris) teñido por el mood */
+@utility paper-bg {
+  background-color: var(--color-surface);
+  background-image: url('/img/senal/paper.webp');
+  background-size: 900px;
+  background-blend-mode: overlay;
+}
+/* Tiras de papel rasgado: toman el color de `color` (bg-current) */
+@utility torn-down {
+  background: currentColor;
+  mask: url('/img/senal/torn-bottom.webp') center / 100% 100% no-repeat;
+}
+@utility torn-up {
+  background: currentColor;
+  mask: url('/img/senal/torn-top.webp') center / 100% 100% no-repeat;
+}
+
+/* La TV es la ventana (TvFrame). --bz = bisel visible a los lados; el resto sale de las medidas de tv-bezel.png
+   (hueco a mitad de borde: arriba 0.83·bz, abajo 1.37·bz). bezel.webp mide 1800×1200: slices en px de ese tamaño. */
+:root {
+  --plastico: #511f26;
+  --bz: 10px;
+  --panel-w: 0px;
+  --strip-h: calc(100vw / 6.15);
+  --scr-t: calc(var(--bz) * 0.83);
+  --scr-l: var(--bz);
+  --scr-r: calc(var(--panel-w) + var(--bz));
+  --scr-b: calc(var(--strip-h) + var(--bz) * 1.37);
+}
+@media (width >= 48rem) {
+  :root {
+    --bz: clamp(20px, 2.2vw, 40px);
+    --panel-w: clamp(150px, 15vw, 240px);
+    --strip-h: 0px;
+  }
+}
+/* el hueco: mundo 3D, fondo, loader y OSD viven acá */
+.tv-screen {
+  position: fixed;
+  inset: var(--scr-t) var(--scr-r) var(--scr-b) var(--scr-l);
+  border-radius: calc(var(--bz) * 1.6);
+  overflow: hidden;
+}
+/* 9-slice: los arcos de las esquinas quedan enteros, sólo se estiran los tramos rectos */
+/* bisel y fondo de la tira van estáticos en index.html: pintan con el CSS, sin esperar al JS (LCP) */
+html[data-flat] :is(.tv-bezel, .tv-strip-bg) {
+  display: none;
+}
+.tv-bezel {
+  --bw: calc(var(--bz) * 2.41) calc(var(--bz) * 2.53) calc(var(--bz) * 2.89) calc(var(--bz) * 2.53);
+  position: fixed;
+  z-index: 50;
+  inset: 0 var(--panel-w) var(--strip-h) 0;
+  pointer-events: none;
+  border-style: solid;
+  border-width: var(--bw);
+  border-image: url('/img/senal/bezel.webp') 300 315 360 315 / var(--bw) stretch;
+}
+.tv-panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: var(--panel-w);
+  background: var(--plastico);
+}
+.tv-strip {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: var(--strip-h);
+  z-index: 50;
+}
+.tv-strip-bg {
+  background: url('/img/senal/strip.webp') center / 100% 100%;
+}
+.tv-btn {
+  background: url('/img/senal/btn-up.webp') center / contain no-repeat;
+  &:active {
+    background-image: url('/img/senal/btn-down.webp');
+  }
+}
+
+/* Entrada del hero al terminar el loader (Loader pone/quita data-loading en <html>) */
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 var(--from-y, 24px);
+    rotate: var(--from-r, 0deg);
+  }
+}
+html[data-loading] .enter {
+  opacity: 0;
+}
+html:not([data-loading]) .enter {
+  animation: enter 0.7s var(--ease-snap) backwards; /* backwards: al terminar no pisa el hover */
+  animation-delay: var(--d, 0ms);
+}
+
+/* Estática de TV: ruido SVG rasterizado una vez como fondo (no es un filtro en vivo) */
+@utility static-noise {
+  /* teñida con el canal: sin tinte se ve gris lavado */
+  background-color: color-mix(in oklab, var(--color-glow) 35%, var(--color-surface));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-blend-mode: overlay;
+  animation: static-shift 0.3s steps(3) infinite;
+}
+@keyframes static-shift {
+  33% {
+    background-position: 60px -40px;
+  }
+  66% {
+    background-position: -90px 70px;
+  }
+}
+/* Cambio de canal: destello de estática */
+@keyframes zap-flash {
+  0%,
+  55% {
+    opacity: 0.95;
+  }
+  100% {
     opacity: 0;
   }
-  10% {
+}
+/* OSD de la tele: aparece al cambiar de canal y se va */
+@keyframes osd {
+  0%,
+  85% {
     opacity: 1;
   }
   100% {
-    transform: translate3d(var(--drift, 8vw), 112vh, 0) rotate(var(--spin, 540deg));
-    opacity: 0.2;
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes drop {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes float {
+  50% {
+    translate: 0 -14px;
   }
 }
 
@@ -160,26 +340,4 @@ html.lenis body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Títulos display: sombra dura en acento para separarlos del arte en tinta (neobrutalismo) */
-@utility display-shadow {
-  text-shadow:
-    0.05em 0.05em 0 var(--color-accent),
-    0 0 0.02em var(--color-surface);
-}
-
-/* Bloque de texto legible sobre el arte */
-@utility brutal-panel {
-  background: var(--color-surface);
-  border: 3px solid var(--color-line);
-  box-shadow: 6px 6px 0 var(--color-shadow);
-  padding: 0.9rem 1.1rem;
-}
-
-/* Radio del círculo que revela la foto a color en el retrato (animable gracias a @property) */
-@property --reveal-r {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 0px;
 }

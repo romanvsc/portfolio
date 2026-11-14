@@ -2,3 +2,10 @@ node_modules
 dist
 .DS_Store
 *.local
+cv/.build
+# originales y fotos de trabajo: quedan locales (lo publicado va optimizado en public/)
+imagenes-generadas/
+ChatGPT Image*.png
+ref*.jpg
+roman1.png
+roman2.png

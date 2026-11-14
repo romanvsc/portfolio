@@ -1,113 +1,89 @@
-# DESIGN.md — 「道 MICHI」 el camino hacia el bosque
+# DESIGN.md — 「SEÑAL」 la TV es la ventana
 
 ## 1. Concepto
-**ロマン (Roman):** en japonés, *roman* es la búsqueda de un ideal, el espíritu de aventura. El nombre de Román ya es un concepto.
-El sitio es un **viaje hacia adentro**: no se baja por una página, se camina hacia el fondo de un bosque cruzando portales **torii** (como el túnel Senbon Torii de Fushimi Inari). Cada portal es un capítulo.
-Tiene sentido con su trabajo: buena parte de sus clientes son forestales (Garuhapé, Forestal Paraguay, Indufor), así que el bosque no es un decorado, es su terreno.
+Román es un canal. **La TV es la ventana**: el bisel enmarca el navegador, el panel de la derecha (tira abajo en mobile) tiene los controles y el contenido vive en la pantalla. El scroll viaja en Z por los canales; los controles cambian de canal con un **corte** (salto instantáneo + estática + OSD), no con scroll. Cierra con "SEÑAL PERDIDA", que es el contacto.
+Todo se lee como un sistema que transmite (versión `ver.2026.11`, OSD `CANAL 03`, guía de programación, carta de ajuste), porque Román es analista de sistemas **en formación**: nunca "Analista de Sistemas" sin "estudiante" o "en formación".
 
-**Tensión estética: tinta y concreto.** Lo orgánico del sumi-e (pincelada, enso, niebla, hojas) choca con bloques **neobrutalistas** (bordes gruesos, sombras duras, chips mono, grillas visibles). Ninguno de los dos domina: el pincel dibuja el paisaje y el concreto sostiene la información.
+Referencias: `ref1.jpg` (TV, título condensado inclinado, stickers, avatar en halftone asomando), `ref2.jpg` (404 pixel con glow naranja, personaje cayendo), `ref4.jpg` (collage de papel violeta, borde rasgado, anteojos que reflejan texto, doodles).
 
-**La luz cuenta la historia.** Se entra al **amanecer** (washi claro, como la referencia del samurái), se avanza hacia el **bosque** (musgo) y se termina de **noche** (sumi con brillo wakaba). No hay toggle claro/oscuro: el modo es el viaje.
+**Tensión estética: pantalla y papel.** La pantalla (fósforo, scanlines, pixel, glow) muestra; el papel (collage, halftone, cinta, stickers, doodles a mano) cuenta.
 
-Referencia visual: ilustración plana tipo "samurái frente al sol" (sol grande, siluetas planas, montañas en capas, ramas en las esquinas, partículas). El sol rojo se vuelve un **enso jade**.
-
-## 2. Capítulos (estaciones en Z)
-| # | Kanji | Nombre | Mood | Qué pasa | React Bits |
+## 2. Canales (estaciones en Z)
+| # | CH | id | Mood | Qué pasa | React Bits |
 |---|---|---|---|---|---|
-| 0 | 序 | Jo, preludio | dawn | Loader: gota de tinta, ロマン se descifra en ROMÁN, se dibuja el enso | DecryptedText |
-| 1 | 門 | Mon, portal | dawn | Hero: enso jade gigante con el retrato en **duotono verde suave** (horneado; hover revela la foto a color en un círculo), primer torii, montañas, bambú, hojas cayendo, nombre en display y sello hanko girando | CircularText, Magnet |
-| 2 | 道 | Michi, camino | dawn | Sobre mí: manifiesto que se revela palabra por palabra con el avance (`RevealWords`), qué significa ロマン, tarjetas-dato a distintas profundidades | — (Reveal propio) |
-| 3 | 技 | Waza, técnica | forest | Skills: muro de **ema** (tablillas votivas) colgando a distintas profundidades; bandas de tecnologías detrás | ScrollVelocity |
-| 4 | 仕 | Shi (仕組み, sistema) | forest | **Sistemas**: un portal, 4 proyectos (壱…肆). Al scrollear, un **corte de katana** (pincelada de tinta diagonal) parte la placa en dos mitades que caen y aparece la siguiente; paginador de numerales; snap por proyecto. Click → caso de estudio desenrollado como makimono | — |
-| 5 | 網 | Ami (red, web) | forest | **Webs**: igual que Sistemas, con 伍…捌 | — |
-| 6 | 森 | Mori, bosque | forest | Bosque profundo: arboleda de bambú en 3 profundidades, el komorebi llega al máximo; números reales | LightRays, CountUp |
-| 7 | 縁 | En, vínculo | night | Contacto: santuario de noche, curvas de nivel (SVG `Contours`), enso, torii brillante, gran CTA del mail, links, firma con hanko | Magnet, LightRays (luna) |
+| 0 | — | loader | fosforo | Encendido del CRT: línea → cuadro, estática, ROMÁN se descifra, "Sintonizando…" | DecryptedText |
+| 1 | 01 | senal | fosforo | Hero: la pantalla de la TV con stickers, nombre, avatar en halftone, pitch + CTAs (cortan de canal), barra con versión y redes | GlitchText (hover del nombre) |
+| 2 | 02 | quien | uva | Collage: manifiesto (RevealWords), "desde Misiones" a mano, datos con cinta, tira rasgada con los ojos y "Sistemas"/"Web" en las lentes | — |
+| 3 | 03 | guia | fosforo | Stack como guía de programación (grilla), banda de tecnologías detrás | ScrollVelocity |
+| 4 | 04 | sistemas | fosforo | 4 emisiones con snap. Captura en mini CRT + ficha (Rol/Stack/Estado). Cambio = **zapping**: el CRT se cierra en una línea, estática, se enciende el siguiente | — |
+| 5 | 05 | webs | brasa | Igual, con los 4 sitios | — |
+| 6 | 06 | ajuste | uva | Carta de ajuste: barras en la tríada + números reales | CountUp |
+| 7 | 404 | contacto | brasa | Señal perdida: avatar cayendo, HABLEMOS en pixel con glow, mail, redes, footer. También recibe `#/p/<id>` inexistentes | FuzzyText, Magnet |
 
-Siempre activos: LightRays (única capa WebGL de fondo; intensidad por estación, luna tenue en 縁), Noise (grano de washi), GradualBlur (profundidad de campo en bordes), Ribbons (rastro de tinta en el cursor, solo con puntero fino), StaggeredMenu (navegación por kanji) + barra de progreso de kanji a la derecha.
-Descartados:
-- PixelSnow: el pixel-art choca con el estilo.
-- Topography: satura a blanco con el bloom aditivo; lo reemplaza `Contours` en SVG.
-- ScrollReveal y Shuffle: dependen del scroll de la ventana; los reemplaza `Reveal.tsx`.
-- LogoLoop, y Lanyard por presupuesto de rendimiento.
-- Cursores múltiples.
+Siempre activos: TvFrame (bisel 9-slice, placa ROMÁN, panel con perilla de canal + marcas 01…404, CH▲/CH▼, perilla de idioma y sticker giratorio sobre el parlante; en mobile tira con CH▼/display/CH▲/idioma), y en el vidrio (`Backdrop`): Noise, scanlines 20%, viñeta, estática en cada cambio de canal y OSD que aparece 2.4 s.
+Descartados: StaggeredMenu y el selector lateral (los reemplazan los controles de la TV), GradualBlur (ensuciaba la barra del hero), LightRays y Ribbons (otro concepto), PixelTransition (es por hover; el zapping va atado al scroll), Topography, ScrollReveal/Shuffle (dependen del scroll de la ventana).
 
-## 3. Color
-### Primitivos (solo dentro de `index.css`)
-| Token | Hex | Uso |
-|---|---|---|
-| sumi-950 | `#070A08` | negro tinta |
-| sumi-900 | `#0D120F` | superficies de noche |
-| sumi-800 | `#16201A` | superficie elevada de noche |
-| moss-700 | `#1E3B2B` | bosque profundo |
-| jade-600 | `#1F7A55` | acento sobre claro |
-| jade-500 | `#2E9E6E` | enso / sol |
-| matcha-300 | `#A8D672` | acento suave |
-| wakaba-200 | `#D4F28C` | hoja nueva, acento brillante de noche |
-| washi-50 | `#F4F2EA` | papel |
-| washi-100 | `#E8E5D8` | papel elevado |
+## 3. Color: tríada 150° / 30° / 270°
+Reparto 60/30/10: **uva** (violeta) de base, **fósforo** (verde) como marca, **brasa** (naranja) como señal.
+
+### Primitivos (sólo en `moods.ts` → `P` e `index.css`)
+| Familia | 950 | 900/800 | 500 | 300 |
+|---|---|---|---|---|
+| fósforo | `#04140E` | `#0E3B2A` | `#1FC27A` | `#7CF0B4` |
+| brasa | `#2A0E04` | `#4A1A08` / `#B33A0B` | `#FF6A1F` | `#FFB27A` |
+| uva | `#120A22` | `#2A1C4A` | `#7B5CF5` | `#B9A7FF` |
+| neutros | tinta `#0B0812` | papel-200 `#E6D8BF` | | papel-50 `#F5ECDC` |
+
+`uva-500` no va como texto (≈4.3:1 sobre oscuro).
 
 ### Semánticos (lo único que usan los componentes)
-`surface` · `surface-raised` · `ink` · `ink-muted` · `line` · `shadow` · `accent` · `accent-bright` · `on-accent` · `sun` · `mist`
+`surface` · `surface-raised` · `ink` · `ink-muted` · `line` · `shadow` · `accent` · `accent-alt` · `pop` · `on-accent` · `glow` · `paper` · `on-paper`
 
-### Moods
-| Semántico | dawn (amanecer) | forest (bosque) | night (noche) |
+| Semántico | fosforo | uva | brasa |
 |---|---|---|---|
-| surface | washi-50 | moss-700 | sumi-950 |
-| surface-raised | washi-100 | `#25483A` | sumi-800 |
-| ink | sumi-950 | washi-50 | washi-50 |
-| ink-muted | `#3A4A40` | `#C9D4C4` | `#A9B5AC` |
-| line | sumi-950 | sumi-950 | wakaba-200 |
-| shadow | sumi-950 | sumi-950 | jade-500 |
-| accent | jade-600 | matcha-300 | wakaba-200 |
-| accent-bright | jade-500 | wakaba-200 | wakaba-200 |
-| on-accent | washi-50 | sumi-950 | sumi-950 |
-| sun | jade-500 | jade-500 | jade-600 |
-| mist | washi-100 | `#2B5240` | sumi-800 |
+| surface / raised | fósforo-950 / 800 | uva-950 / 800 | brasa-950 / 900 |
+| ink / ink-muted | papel-50 / `#A8D9C2` | papel-50 / `#C9BEE6` | papel-50 / `#F2C3A3` |
+| accent | fósforo-500 | fósforo-500 | brasa-500 |
+| accent-alt | brasa-500 | uva-300 | fósforo-300 |
+| pop | uva-300 | brasa-500 | uva-300 |
+| glow | fósforo-300 | uva-300 | brasa-300 |
+| line / shadow | tinta / tinta | tinta / tinta | tinta / brasa-800 |
+| on-accent, paper, on-paper | tinta, papel-50, tinta | ← | ← |
 
-Fuente de verdad: `src/world/moods.ts`. El mood activo se interpola con un tween de GSAP sobre las variables de `:root` cuando cambia la estación. En secciones sueltas (FlatStory) se aplica con `moodVars()`, que emite también `--color-*`, porque Tailwind las resuelve en `:root`. Todos los pares texto/fondo cumplen WCAG AA en los tres moods. `ink-muted` sobre `surface` está pensado para ≥ 4.5:1.
+Fuente de verdad: `src/world/moods.ts`. `moods.test.ts` valida WCAG AA de todos los pares texto/fondo en los tres moods. El mood activo se tweenea con GSAP sobre `:root`; en FlatStory se aplica con `moodVars()`.
 
 ## 4. Tipografía
 | Rol | Fuente | Notas |
 |---|---|---|
-| Display | **Dela Gothic One** | Pesada, con glifos latinos y japoneses; nombre, títulos de capítulo, numerales. Mayúsculas, tracking −0.02em |
-| Texto | **Zen Kaku Gothic New** | Párrafos y UI, 400/700 |
-| Pincel | **Yuji Syuku** | Solo kanji y kana decorativos, `aria-hidden`. El archivo está recortado a los glifos usados: si agregás uno nuevo, regenerá el subset (ver comentario en `index.css`) |
-| Etiquetas | **JetBrains Mono** | Chips, metadatos, numeración. Mayúscula y tracking +0.08em |
+| Display | **Anton** | Mayúsculas, `-skew-x-6` como ref1. Sólo textos cortos (ver vault: `Errores/tipografia-display-en-texto-largo.md`) |
+| Texto | **Space Grotesk** | 400/700 |
+| Pixel | **Pixelify Sans** | utilidad `osd`, **sólo ≥ 1rem**: OSD, números de canal, "CH 0X", HABLEMOS. Las etiquetas chicas (`label-px`) van en Space Grotesk 700 mayúscula: el pixel chico no se leía |
+| Mano | **Caveat Brush** | Anotaciones del collage |
 
-Escala fluida con `clamp()`: display-xl `clamp(3.5rem, 11vw, 11rem)`, display-l `clamp(2.5rem, 6vw, 5.5rem)`, h3 `clamp(1.5rem, 2.4vw, 2.25rem)`, cuerpo `1.0625rem/1.65`.
+Display-xl `clamp(3.6rem, 12.5vw, 12rem)`, display-l `clamp(2.4rem, 7vw, 6.5rem)`. Dentro de la TV los tamaños van en `cqw/cqh` (la pantalla es `@container`).
 
-## 5. Neobrutalismo
-- Borde: `3px solid var(--color-line)` (`.brutal-border`)
-- Sombra dura: `6px 6px 0 var(--color-shadow)`, sin blur (`.brutal-shadow`)
-- Radios: **cero**. Las únicas excepciones son los círculos (enso, sello, botones redondos)
-- Hover interactivo: `translate(-2px,-2px)` con sombra `8px 8px`. Active: `translate(4px,4px)` con sombra `2px` (se hunde)
-- Chips: mono, mayúscula, borde de 2px, fondo `surface-raised`
-- Paneles: fondo `surface-raised`, borde y sombra, encabezado con banda `accent` donde va el numeral kanji
-- Grilla visible en las placas (líneas de 1px de `line` al 15%) que evoca madera o concreto
-- `brutal-panel`: todo texto corrido que cae sobre arte va en un bloque con fondo `surface`, borde y sombra
-- `display-shadow`: los títulos display llevan una sombra dura en `accent` para separarse de la tinta negra de los torii
+## 5. Bloques
+- `brutal-border` 3px `line`, `brutal-shadow` 6px sin blur, `brutal-press` (hover sube, active se hunde), `brutal-panel` (texto sobre arte)
+- `sticker`: papel, borde, radio 0.6rem, girado. Radios: sólo stickers, CRT y botones de canal
+- `glow-text`: brillo de fósforo en títulos de pantalla
+- `hatch` (rayado diagonal), `scanlines`, `crt-vignette`, `static-noise` (estática SVG rasterizada, no filtro en vivo), `paper-bg` (papel gris teñido por el mood), `torn-down`/`torn-up` (máscaras de papel rasgado, toman `currentColor`)
 
-## 6. Arte (SVG propios en `src/art/`)
-Formas planas, sin degradados, siluetas como la referencia:
-- **Torii:** dos pilares, kasagi curvo y nuki. Color `ink` con detalle `accent`
-- **Montañas:** 3 o 4 capas de polígonos con niebla (`mist`) entre ellas
-- **Bambú:** tallos verticales con nudos y hojas lanceoladas, en los bordes
-- **Enso:** círculo de pincel abierto (`feTurbulence` + `feDisplacementMap` para el borde roto), en `sun`
-- **Hanko:** sello circular o cuadrado con ロマン vertical
-- **Hojas:** 6 a 10 hojas de bambú cayendo con CSS (rotación y deriva), desactivadas con reduced-motion
-- **Seigaiha:** patrón de olas de fondo al 6–10% de opacidad (paneles, caso de estudio)
-- **Contours:** curvas de nivel concéntricas e irregulares (montaña vista desde arriba), fondo de 縁
-- **Branch:** ramas de tinta fractales en las esquinas superiores del hero (como en la referencia)
+## 6. Arte
+- Avatar ilustrado de Román, **set animado** en `imagenes-generadas/`. `npm run images` hornea halftone + duotono con la rampa del mood (`scripts/halftone.mjs`, testeado) a `public/img/senal/`: `peek` (fósforo), `eyes` (uva), `falling` (brasa); `sticker`, `tv`, `paper`, `torn-*`, `tape`, favicon y `og.jpg`
+- Hueco de la pantalla en `tv.webp` (medido sobre el alfa): 8% izq, 21.1% der, 10.9% arriba, 13.7% abajo
+- SVG propios (`src/art`): Star, Sparkle, Scribble, ColorBars. Colores por `currentColor`
+- **Marco** (`TvFrame`, `.tv-bezel/.tv-panel/.tv-strip/.tv-screen` en `index.css`): `tv-bezel.png` exportado a 1800×1200, `border-image` con slices 300/315/360/315 (más grandes que el bisel para que los arcos de las esquinas queden enteros). `--bz` = bisel visible a los lados; hueco arriba 0.83·bz, abajo 1.37·bz. Desktop: panel `clamp(150px, 15vw, 240px)`; mobile: bz 10px y tira `100vw/6.15`. Perilla: arco de 270°, la marca de `knob-dial` está a ~40° de las 12
+- **Íconos de la Guía:** logos de simple-icons rasterizados a 20×20 (`npm run icons` → `src/art/tech-icons.ts`); MySQL e IndexedDB usan un cilindro dibujado a mano
 
 ## 7. Movimiento
-- El scroll manda: casi todo es *scrub*, nada de autoplay largo
-- Entradas: `power3.out`. Cruce de portal: `expo.inOut`. Snap a estaciones: 0.6 s
-- Profundidad: la opacidad y la escala dependen de la distancia a la cámara. Lo que pasa detrás de la cámara se desvanece en 300 unidades
-- Loader ≤ 2.2 s y se puede saltar (click, tecla o scroll)
-- `prefers-reduced-motion`: `FlatStory` muestra las mismas escenas en flujo vertical, sin WebGL, sin cursor y sin hojas
+- El scroll manda (scrub). Snap a canales 0.7 s; zapping atado al progreso del grupo
+- Cambio de canal: destello de estática 0.45 s que termina (no queda repintando)
+- Loader: la tele se enciende dentro del hueco (línea → cuadro, estática, ROMÁN se descifra), ≤ 2.4 s, se salta con click, tecla o scroll
+- Entrada del hero: `.enter` + `--d/--from-y/--from-r` (stagger), espera a que el Loader quite `data-loading` de `<html>`; fill `backwards` para no pisar el hover
+- Papel en hover: stickers y tarjetas con cinta se enderezan y suben 2 px; `brutal-press` también en `:focus-visible`
+- `prefers-reduced-motion` / `?motion=off` → `FlatStory`
 
-## 8. Layout por estación
-- Contenedor de contenido: máximo 1200px, con 16px de margen en mobile
-- El kanji de capítulo va enorme (Yuji Syuku, 30–40vh) al 8% de opacidad detrás del contenido
-- Las etiquetas de capítulo usan la forma `門 · 01 / MON`
-- Mobile (<768px): menos capas por estación, placas a ancho completo, sin Ribbons, LightRays con `maxDevicePixelRatio: 1`
+## 8. Layout
+- Contenido máx. 1200–1300px, 16px de margen en mobile
+- Hero mobile (pantalla vertical): stickers arriba, nombre, pitch en el medio y avatar abajo; la barra sólo en desktop. Contacto mobile sin el párrafo
+- Tira de ojos: `--w` 170vw en mobile, 100vw en desktop; alto `min(0.2·w, 36vh)`
