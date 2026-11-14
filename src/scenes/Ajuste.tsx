@@ -10,14 +10,14 @@ export function AjusteContent() {
   const { t } = useLang();
   const active = useStationMaybe()?.active ?? true;
   return (
-    <div className="relative mx-auto flex h-full max-w-300 flex-col justify-center gap-8 px-4 md:gap-10 md:px-10">
+    <div className="relative mx-auto flex h-full max-w-300 flex-col justify-center gap-8 px-4 short:gap-4 md:gap-10 md:px-10">
       <div className="flex flex-col gap-3">
         <ChannelLabel ch="06" name={t.ajuste.label} />
         <DisplayTitle text={t.ajuste.title} />
       </div>
-      <dl className="grid gap-4 sm:grid-cols-3">
+      <dl className="grid gap-4 short:gap-3 sm:grid-cols-3">
         {t.ajuste.stats.map((s, i) => (
-          <Rise key={s.k} at={0.3 + i * 0.05} className="brutal-border brutal-shadow flex flex-col-reverse bg-surface-raised p-5">
+          <Rise key={s.k} at={0.3 + i * 0.05} className="brutal-border brutal-shadow flex flex-col-reverse bg-surface-raised p-5 short:py-3">
             <dt className="label-px mt-2 text-ink">{s.k}</dt>
             <dd className="glow-text font-display text-[clamp(3.5rem,8vw,6.5rem)] leading-none text-glow">
               <CountUp to={s.n} duration={1.6} startWhen={active} />

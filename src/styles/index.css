@@ -1,4 +1,12 @@
 @import 'tailwindcss';
+/* celulares bajos (iPhone SE, Android 640): las escenas se compactan para que todo entre en la pantalla */
+@custom-variant short {
+  @media (max-width: 767px) and (max-height: 760px) {
+    :root:not([data-flat]) & {
+      @slot;
+    }
+  }
+}
 
 /* Tokens: primitivos → semánticos → moods. Ver DESIGN.md §3. Componentes usan SOLO semánticos. */
 
