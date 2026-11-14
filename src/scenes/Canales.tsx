@@ -24,7 +24,7 @@ export function ProjectCard({ p }: { p: Project }) {
           className="brutal-shadow brutal-press group relative block w-full cursor-pointer overflow-hidden rounded-[1.4rem] border-[6px] border-line bg-surface-raised p-2 md:p-3">
           <span className="relative block overflow-hidden rounded-[0.9rem]">
             <img src={p.images[0]} alt="" loading="lazy" decoding="async"
-              className="aspect-16/10 max-h-[24vh] w-full object-cover object-left-top transition-transform duration-700 ease-snap group-hover:scale-[1.04] md:max-h-none" />
+              className="aspect-16/10 max-h-[24vh] w-full short:max-h-[11vh] object-cover object-left-top transition-transform duration-700 ease-snap group-hover:scale-[1.04] md:max-h-none" />
             <span aria-hidden className="scanlines pointer-events-none absolute inset-0 opacity-60" />
             <span aria-hidden className="crt-vignette pointer-events-none absolute inset-0" />
           </span>
@@ -39,9 +39,9 @@ export function ProjectCard({ p }: { p: Project }) {
           <p className="label-px pb-1 text-ink-muted">{tr(p.client)}</p>
         </Rise>
         <Rise at={0.3}>
-          <h3 className="font-display -skew-x-6 text-[clamp(2rem,4.6vw,4.2rem)] uppercase leading-[0.92] text-ink">{p.name}</h3>
+          <h3 className="font-display -skew-x-6 text-[clamp(2rem,4.6vw,4.2rem)] uppercase short:text-[1.6rem] leading-[0.92] text-ink">{p.name}</h3>
         </Rise>
-        <Rise at={0.34}><p className="max-w-md text-base leading-relaxed text-ink md:text-lg">{tr(p.summary)}</p></Rise>
+        <Rise at={0.34}><p className="max-w-md text-base leading-relaxed text-ink short:text-sm short:leading-snug md:text-lg">{tr(p.summary)}</p></Rise>
         <Rise at={0.38}>
           <dl className="grid max-w-md grid-cols-[auto_1fr] border-[3px] border-line bg-surface-raised text-sm max-md:hidden">
             <dt className="label-px border-r-2 border-b-2 border-line/60 px-3 py-2 text-glow">{t.saku.role}</dt>
@@ -53,11 +53,11 @@ export function ProjectCard({ p }: { p: Project }) {
               <dd className="border-t-2 border-line/60 px-3 py-2 text-ink">{tr(p.status)}</dd>
             </>}
           </dl>
-          <p className="label-px text-ink-muted md:hidden">{t.saku.role}: {tr(p.role)}</p>
+          <p className="label-px text-ink-muted short:hidden md:hidden">{t.saku.role}: {tr(p.role)}</p>
         </Rise>
-        <Rise at={0.42} className="flex flex-wrap gap-3 md:pt-1">
-          <BrutalButton tone="accent" onClick={() => openCase(p.id)}>{t.saku.open} <span aria-hidden>→</span></BrutalButton>
-          {p.url && <BrutalLink href={p.url} aria-label={`${t.saku.live}: ${host}`}>{t.saku.live}</BrutalLink>}
+        <Rise at={0.42} className="flex flex-wrap gap-2 md:gap-3 md:pt-1">
+          <BrutalButton tone="accent" className="max-md:px-3 short:py-2" onClick={() => openCase(p.id)}>{t.saku.open} <span aria-hidden>→</span></BrutalButton>
+          {p.url && <BrutalLink href={p.url} className="max-md:px-3 short:py-2" aria-label={`${t.saku.live}: ${host}`}>{t.saku.live}</BrutalLink>}
         </Rise>
       </div>
     </article>

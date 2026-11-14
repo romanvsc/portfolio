@@ -18,8 +18,8 @@
     <meta property="og:image" content="/og.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <style>html,body{background:#04140e;margin:0}</style>
-    <!-- sin movimiento (FlatStory): sin marco de TV. App lee data-flat -->
-    <script>if(matchMedia('(prefers-reduced-motion: reduce)').matches||new URLSearchParams(location.search).get('motion')==='off')document.documentElement.dataset.flat=''</script>
+    <!-- sin movimiento (FlatStory): sin marco de TV. App lee data-flat. Celular apaisado: la TV queda muy baja para el contenido; al rotar se recarga -->
+    <script>var lp=matchMedia('(orientation: landscape) and (max-height: 500px)');lp.onchange=function(){location.reload()};if(lp.matches||matchMedia('(prefers-reduced-motion: reduce)').matches||new URLSearchParams(location.search).get('motion')==='off')document.documentElement.dataset.flat=''</script>
   </head>
   <body>
     <div class="tv-bezel" aria-hidden="true"></div>

@@ -13,21 +13,21 @@ const GROUPS = Object.keys(SKILLS) as Group[];
 export function GuiaContent({ flat = false }: { flat?: boolean }) {
   const { t } = useLang();
   return (
-    <div className={`relative mx-auto flex h-full w-full max-w-300 flex-col justify-center gap-6 px-4 md:gap-8 md:px-10 ${flat ? '' : 'pt-16'}`}>
-      <div className="flex flex-col gap-3">
+    <div className={`relative mx-auto flex h-full w-full max-w-300 flex-col justify-center gap-6 px-4 short:gap-3 md:gap-8 md:px-10 ${flat ? '' : 'pt-16 short:pt-8'}`}>
+      <div className="flex flex-col gap-3 short:gap-1.5">
         <ChannelLabel ch="03" name={t.guia.label} />
         <DisplayTitle text={t.guia.title} />
       </div>
       <div className="brutal-shadow border-[3px] border-line">
         {GROUPS.map((g, n) => (
           <Rise key={g} at={0.28 + n * 0.04}
-            className="grid grid-cols-[6.5rem_1fr] border-line bg-surface-raised not-last:border-b-[3px] md:grid-cols-[10rem_1fr]">
-            <h3 className="label-px flex items-center gap-2 border-r-[3px] border-line bg-accent px-3 text-on-accent">
+            className="grid grid-cols-[6.5rem_1fr] border-line short:grid-cols-[5.5rem_1fr] bg-surface-raised not-last:border-b-[3px] md:grid-cols-[10rem_1fr]">
+            <h3 className="label-px flex flex-col justify-center gap-0.5 border-r-[3px] md:flex-row md:items-center md:justify-start md:gap-2 border-line bg-accent px-3 text-on-accent short:px-2">
               <span aria-hidden>{String(n + 1).padStart(2, '0')}</span>{t.guia.groups[g]}
             </h3>
             <ul className="flex flex-wrap">
               {SKILLS[g].map((s) => (
-                <li key={s} className="label-px flex min-w-fit flex-1 items-center gap-2.5 border-r-2 border-b-2 border-line/50 px-3 py-2.5 text-ink md:py-3.5 md:!text-sm">
+                <li key={s} className="label-px flex min-w-fit flex-1 items-center gap-2.5 border-r-2 border-b-2 border-line/50 px-3 py-1.5 text-ink short:gap-1.5 short:px-2 short:py-[3px] md:py-3.5 md:!text-sm">
                   {/* logo en pixel art (scripts/pixel-icons.mjs) */}
                   <svg viewBox={`0 0 ${ICON_SIZE} ${ICON_SIZE}`} aria-hidden shapeRendering="crispEdges" className="size-5 shrink-0 text-glow md:size-6">
                     <path d={TECH_ICONS[s]} fill="currentColor" />
@@ -39,7 +39,7 @@ export function GuiaContent({ flat = false }: { flat?: boolean }) {
           </Rise>
         ))}
       </div>
-      <p className="label-px text-ink-muted">{t.guia.note}</p>
+      <p className="label-px text-ink-muted short:hidden">{t.guia.note}</p>
     </div>
   );
 }
